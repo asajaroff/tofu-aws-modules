@@ -9,13 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- s3, cdn and dns modules
+- S3, Coudfront, Route53 and ACM modules for the static website
 - Initial project structure
 
 ### Changed
 
+- ACM certificates and domians are now generated on the CloudFront module
 - Name of project on the license
 - Better description in the README.md file
+- Modified outputs for the CDN in the s3 website package
+
+### Removed
+- `certificates` folder as it was moved into
 
 [0.0.1]: https://github.com/asajaroff/tf-aws-s3-website/releases/tag/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/asajaroff/tf-aws-s3-website/releases/tag/v0.0.1

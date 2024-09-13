@@ -15,3 +15,11 @@ output cloudfront_https_url {
   sensitive = false
   description = "URL of the CloudFront distribution, for testing purposes."
 }
+
+output route53_record_name {
+  value = aws_route53_record.base_domain.name
+}
+
+output route53_record_fqdn {
+  value = aws_route53_record.base_domain.name
+}
