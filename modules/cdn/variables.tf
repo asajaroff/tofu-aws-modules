@@ -15,14 +15,30 @@ variable "s3_bucket_regional_domain_name" {
   description = "Regional domain name for the target bucket."
 }
 
-variable "cdn_name" {
+variable "s3_origin_path" {
   type = string
-  default = "website_in_s3"
-  description = "A name for the CDN distribution"
+  default = "build/"
+  description = "Identifier for the CloudFront Origin Access Control"
 }
 
 variable "cdn_comment" {
   type = string
-  default = "For a website deployed in S3"
-  description = "A comment for the CDN distribution"
+  description = "A mandatory comment to identify the CDN distribution"
+}
+
+variable "cdn_origin_access_control_name" {
+  type = string
+  description = "Identifier for the CloudFront Origin Access Control"
+}
+
+variable "cdn_origin_access_control_comment" {
+  type = string
+  description = "Identifier for the CloudFront Origin Access Control"
+}
+
+variable "country_blacklist" {
+  type = list(string)
+  # https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+  default = ["CN", "RU", "PK", "IN", "KP" ]
+  description = "A list of countries to blacklist, in the form of "
 }

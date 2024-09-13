@@ -12,5 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - s3, cdn and dns modules
 - Initial project structure
 
+### Changed
+
+- Name of project on the license
+- Better description in the README.md file
+
 [0.0.1]: https://github.com/asajaroff/tf-aws-s3-website/releases/tag/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/asajaroff/tf-aws-s3-website/releases/tag/v0.0.1
