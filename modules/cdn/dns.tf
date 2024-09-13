@@ -14,7 +14,7 @@ resource "aws_route53_record" "base_domain" {
 
   alias {
     name = aws_cloudfront_distribution.s3_distribution.domain_name
-    zone_id = aws_cloudfront_distribution.s3_distribution.id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
@@ -35,7 +35,7 @@ resource "aws_route53_record" "base_domain_ipv6" {
 
   alias {
     name = aws_cloudfront_distribution.s3_distribution.domain_name
-    zone_id = aws_cloudfront_distribution.s3_distribution.id
+    zone_id = "Z2FDTNDATAQYW2"
     evaluate_target_health = true
   }
 }
