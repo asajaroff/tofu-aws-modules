@@ -1,11 +1,12 @@
-variable "name" {
+variable "bucket_name" {
   type = string
-  description = "The bucket name, which must be unique across all AWS resources."
+  default = ""
+  description = "Name of the bucket. If omitted, Terraform will assign a random, unique name. Must be lowercase and less than or equal to 63 characters in length"
 }
 
-variable "region" {
+variable "bucket_prefix" {
   type = string
-  description = "Region where the AWS provider will be configured and deployed"
+  description = "Creates a unique bucket name beginning with the specified prefix"
 }
 
 variable "force_destroy" {
@@ -16,7 +17,7 @@ variable "force_destroy" {
 
 variable "versioning" {
   type = bool
-  default = true
+  default = false
   description = "Enable versioning. Once you version-enable a bucket, it can never return to an unversioned state."
 }
 
@@ -24,4 +25,9 @@ variable "block_public_access" {
   type = bool
   default = false
   description = "If true, will create a block for S3 bucket-level Public Access Block configuration"
+}
+
+variable "region" {
+  type = string
+  description = "Region where the AWS provider will be configured and deployed"
 }
