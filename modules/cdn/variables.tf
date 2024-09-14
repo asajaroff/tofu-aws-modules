@@ -12,7 +12,7 @@ variable "domain_name" {
 }
 
 variable "description" {
-  type = list(string)
+  type = string
   description = "Description of the CDN distribution to be created"
 }
 
