@@ -3,26 +3,30 @@
 #   acl    = "private"
 # }
 resource "aws_cloudfront_origin_access_control" "s3_origin" {
-  name                              = var.cdn_origin_access_control_name
-  description                       = var.cdn_origin_access_control_comment
+  name                              = "${substr(var.s3_bucket_id, 0, 40)}"
+  description                       = "${substr(var.s3_bucket_id, 0, 40)} access control policy for S3 origin"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution
-resource "aws_cloudfront_distribution" "s3_distribution" {
+resource "aws_cloudfront_distribution" "this" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = var.description
+  default_root_object = "index.html"
+  aliases = [ var.aliases ]
+
+  staging = var.environment != "prod" ? true : false
+
+  # S3 origin
   origin {
     domain_name              = var.s3_bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_origin.id
     origin_id                = var.s3_bucket_id
     origin_path              = var.s3_origin_path
   }
-
-  enabled             = true
-  is_ipv6_enabled     = true
-  comment             = var.cdn_comment
-  default_root_object = "index.html"
 
 # ToDo: add logging
 #  logging_config {
@@ -31,11 +35,16 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 #    prefix          = "myprefix"
 #  }
 
-  aliases = [ var.aliases ]
+  custom_error_response {
+    error_code = "404"
+    response_page_path = "public/error.html"
+    # response_code = "404"
+  }
+
 
   default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods  = [ "GET", "HEAD", "OPTIONS" ]
+    cached_methods   = [ "GET", "HEAD", "OPTIONS" ]
     target_origin_id = var.s3_bucket_id
 
     forwarded_values {

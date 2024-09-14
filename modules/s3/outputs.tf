@@ -9,9 +9,21 @@ output "bucket_arn" {
   sensitive = true
 }
 
-output "bucket_domain_name" {
+output "bucket_regional_domain_name" {
   value       = aws_s3_bucket.this.bucket_regional_domain_name
   description = "S3 bucket regional domain name."
+  sensitive = false
+}
+
+output "bucket_website_fqdn" {
+  value       = "${aws_s3_bucket.this.bucket_regional_domain_name}/public/index.html"
+  description = "Index document for the bucket"
+  sensitive = false
+}
+
+output "bucket_website_index" {
+  value       = "${aws_s3_bucket.this.bucket_regional_domain_name}/public/index.html"
+  description = "Index document for the bucket"
   sensitive = false
 }
 

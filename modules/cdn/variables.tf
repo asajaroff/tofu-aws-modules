@@ -8,7 +8,12 @@ EOT
 
 variable "domain_name" {
   type = string
-  description = "Domain desired for the target website to host."
+  description = "Domain name for the site, do not include the top level domain"
+}
+
+variable "description" {
+  type = list(string)
+  description = "Description of the CDN distribution to be created"
 }
 
 variable "region" {
@@ -34,7 +39,6 @@ variable "s3_bucket_id" {
 
 variable "s3_bucket_regional_domain_name" {
   type = string
-  default = ""
   description = "Regional domain name for the target bucket."
 }
 
@@ -46,24 +50,19 @@ variable "mount_cloudfront_default_certificate" {
 
 variable "s3_origin_path" {
   type = string
-  default = "build/"
-  description = "Identifier for the CloudFront Origin Access Control"
+  default = ""
+  description = "Path to the folder, if any, where the site is located"
 }
 
-variable "cdn_comment" {
-  type = string
-  description = "Any comments you want to include about the distribution"
-}
+# variable "cdn_origin_access_control_name" {
+#   type = string
+#   description = "Identifier for the CloudFront Origin Access Control"
+# }
 
-variable "cdn_origin_access_control_name" {
-  type = string
-  description = "Identifier for the CloudFront Origin Access Control"
-}
-
-variable "cdn_origin_access_control_comment" {
-  type = string
-  description = "Identifier for the CloudFront Origin Access Control"
-}
+# variable "cdn_origin_access_control_comment" {
+#   type = string
+#   description = "Identifier for the CloudFront Origin Access Control"
+# }
 
 variable "country_blacklist" {
   # https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
