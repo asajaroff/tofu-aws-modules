@@ -11,3 +11,6 @@ echo:
 
 terraform-generate-docs:
 	@echo "terraform-docs markdown table --output-file README.md ."
+
+terraform-format:
+	terraform fmt -recursive

@@ -11,8 +11,8 @@ resource "aws_route53_record" "base_domain" {
   type    = "A"
 
   alias {
-    name = aws_cloudfront_distribution.this.domain_name
-    zone_id = "Z2FDTNDATAQYW2" # Do not change, this value is from Amazon
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = "Z2FDTNDATAQYW2" # Do not change, this value is from Amazon
     evaluate_target_health = true
   }
 }
@@ -24,16 +24,16 @@ resource "aws_route53_record" "base_domain_ipv6" {
   type            = "AAAA"
 
   alias {
-    name = aws_cloudfront_distribution.this.domain_name
-    zone_id = "Z2FDTNDATAQYW2" # Do not change, this value is from Amazon
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = "Z2FDTNDATAQYW2" # Do not change, this value is from Amazon
     evaluate_target_health = true
   }
 }
 
-  resource "aws_route53_record" "www" {
-    zone_id = data.aws_route53_zone.top_level_domain.zone_id
-    name    = "www.${var.domain_name}"
-    type    = "CNAME"
-    ttl     = "300"
-    records = ["${data.aws_route53_zone.top_level_domain.name}"]
-  }
+resource "aws_route53_record" "www" {
+  zone_id = data.aws_route53_zone.top_level_domain.zone_id
+  name    = "www.${var.domain_name}"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${data.aws_route53_zone.top_level_domain.name}"]
+}

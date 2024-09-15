@@ -6,9 +6,9 @@ data "aws_route53_zone" "selected" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/5.67.0/docs/resources/acm_certificate
 resource "aws_acm_certificate" "this" {
-  domain_name       = "${var.domain_name}.${var.top_level_domain_name}"
+  domain_name               = "${var.domain_name}.${var.top_level_domain_name}"
   subject_alternative_names = ["*.${var.domain_name}.${var.top_level_domain_name}"]
-  validation_method = "DNS"
+  validation_method         = "DNS"
 
   lifecycle {
     create_before_destroy = true
@@ -38,6 +38,6 @@ resource "aws_route53_record" "dns_validation_records" {
 }
 
 resource "aws_acm_certificate_validation" "this" {
-  certificate_arn         = aws_acm_certificate.this.arn
+  certificate_arn = aws_acm_certificate.this.arn
   # validation_record_fqdns = [for record in aws_route53_record.dns_validation_records : record.fqdn]
 }

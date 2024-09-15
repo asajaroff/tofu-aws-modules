@@ -3,7 +3,7 @@
 #   acl    = "private"
 # }
 resource "aws_cloudfront_origin_access_control" "s3_origin" {
-  name                              = "${substr(var.s3_bucket_id, 0, 40)}"
+  name                              = substr(var.s3_bucket_id, 0, 40)
   description                       = "${substr(var.s3_bucket_id, 0, 40)} access control policy for S3 origin"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -16,9 +16,11 @@ resource "aws_cloudfront_distribution" "this" {
   is_ipv6_enabled     = true
   comment             = var.description
   default_root_object = "index.html"
-  aliases = [ var.aliases ]
 
-  staging = var.environment != "prod" ? true : false
+  aliases = var.environment != "prod" ? [var.aliases] : []
+
+  # ToDo: Staging distribution
+  # staging = var.environment != "prod" ? true : false
 
   # S3 origin
   origin {
@@ -28,23 +30,23 @@ resource "aws_cloudfront_distribution" "this" {
     origin_path              = var.s3_origin_path
   }
 
-# ToDo: add logging
-#  logging_config {
-#    include_cookies = false
-#    bucket          = "mylogs.s3.amazonaws.com"
-#    prefix          = "myprefix"
-#  }
+  # ToDo: add logging
+  #  logging_config {
+  #    include_cookies = false
+  #    bucket          = "mylogs.s3.amazonaws.com"
+  #    prefix          = "myprefix"
+  #  }
 
   custom_error_response {
-    error_code = "404"
+    error_code         = "404"
     response_page_path = "public/error.html"
     # response_code = "404"
   }
 
 
   default_cache_behavior {
-    allowed_methods  = [ "GET", "HEAD", "OPTIONS" ]
-    cached_methods   = [ "GET", "HEAD", "OPTIONS" ]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
     target_origin_id = var.s3_bucket_id
 
     forwarded_values {
@@ -75,7 +77,7 @@ resource "aws_cloudfront_distribution" "this" {
     cloudfront_default_certificate = var.mount_cloudfront_default_certificate
     # acm_certificate_arn = aws_acm_certificate.website_cert.arn
     acm_certificate_arn = var.aws_acm_certificate_arn
-    ssl_support_method = "sni-only"
+    ssl_support_method  = "sni-only"
     # minimum_protocol_version = "TLSv1.2_2019"
   }
 }
