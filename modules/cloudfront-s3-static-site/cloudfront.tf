@@ -1,5 +1,5 @@
 resource "aws_cloudfront_origin_access_control" "static_site" {
-  name                              = "s3-cloudfront-oac"
+  name                              = "${var_s3_bucket.site_bucket.id}-s3-cloudfront-oac"
   description                       = "Access Cloudfront to operate on the ${aws_s3_bucket.site_bucket.id} bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
