@@ -1,8 +1,3 @@
-locals {
-  clean_domain_name = trimsuffix(var.hosted_zone_domain_name, ".")
-  domain_name       = "${var.subdomain}.${local.clean_domain_name}"
-}
-
 resource "aws_acm_certificate" "site_cert" {
   provider = aws.acm
   domain_name               = local.domain_name
@@ -33,4 +28,3 @@ resource "aws_acm_certificate_validation" "cert_domains" {
   certificate_arn         = aws_acm_certificate.site_cert.arn
   validation_record_fqdns = [for record in aws_route53_record.validation_records : record.fqdn]
 }
-

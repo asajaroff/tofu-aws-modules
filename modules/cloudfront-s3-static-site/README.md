@@ -10,6 +10,11 @@
 cd templates/
 S3_BUCKET_NAME=bucket_name aws s3 sync ./ s3://${S3_BUCKET_NAME}/public/
 ```
+
+## ToDo
+
+* Trailing spaces in CloudFront Lambda@Edge
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
