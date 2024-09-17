@@ -15,11 +15,13 @@ resource "aws_cloudfront_distribution" "static_site" {
     domain_name              = aws_s3_bucket.site_bucket.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.static_site.id
     origin_id                = local.s3_origin_id
+#   origin_path              = "/${var.s3_origin_path}"
+    origin_path              = var.s3_origin_path
     }
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Static site for ${var.site_fqdn}"
+  comment             = "Static site for ${var.subdomain}.${var.hosted_zone_domain_name}"
   default_root_object = "index.html"
 
   # logging_config {
@@ -28,7 +30,7 @@ resource "aws_cloudfront_distribution" "static_site" {
   #   prefix          = "myprefix"
   # }
 
-  # aliases = ["mysite.example.com", "yoursite.example.com"]
+  aliases = [local.domain_name, "www.${local.domain_name}"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -43,10 +45,21 @@ resource "aws_cloudfront_distribution" "static_site" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
+  }
+
+  custom_error_response {
+    error_code      = 403
+    response_code   = 200
+    response_page_path = "/error-403.html"
+  }
+  custom_error_response {
+    error_code      = 404
+    response_code   = 200
+    response_page_path = "/error-404.html"
   }
 
   # Cache behavior with precedence 0
@@ -83,11 +96,13 @@ resource "aws_cloudfront_distribution" "static_site" {
 
   tags = merge(
       {
-        "Name" = "${var.site_fqdn}"
+        "Name" = "${var.subdomain}.${var.hosted_zone_domain_name}"
       },
       var.extra_tags)
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = aws_acm_certificate.site_cert.arn
+    ssl_support_method = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }

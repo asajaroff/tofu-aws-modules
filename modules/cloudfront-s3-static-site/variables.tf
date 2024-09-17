@@ -1,18 +1,28 @@
+variable "s3_origin_path" {
+  type        = string
+  default     = "/public"
+  description = <<EOT
+The Cloudfront distribution will be configured to serve content from this folder within the S3 bucket.
+A valid value is `/public` or `/site`.
+https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginPath
+EOT
+}
+
 variable "s3_bucket_name" {
   type        = string
   description = "Name of the S3 bucket that will be created to store the static site content"
 }
 
-variable "site_fqdn" {
+variable "subdomain" {
   type        = string
   description = <<EOT
-Fully qualified domain name (FQDN) that will be used to access the static site.
-ACM Certificates will be created for this domain and the CloudFront distribution will be configured to use them.
-The form is `example.com` or `subdomain.example.com`.
+Subdomain of the site. If the site is hosted at www.example.com, the subdomain is www.
+If it is an enpty string, the site will be hosted at the root of the domain.
+An additional `www.` record will be created.
 EOT
 }
 
-variable "top_level_domain" {
+variable "hosted_zone_domain_name" {
   type        = string
   description = "Top level domain of the site"
 }
@@ -30,15 +40,7 @@ variable "extra_tags" {
 variable "is_prod" {
   type        = bool
   default    = false
-  description = "Whether the environment is production or not"
-}
-
-
-variable "site_deploy_folder" {
-  type        = string
-  default     = "public/"
   description = <<EOT
-The Cloudfront distribution will be configured to serve content from this folder within the S3 bucket.
-A valid value is `public/` or `site/`.
+If true, will enable Bucket Versioning and Bucket Logging.
 EOT
 }
