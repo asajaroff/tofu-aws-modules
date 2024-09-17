@@ -29,7 +29,7 @@ resource "aws_route53_record" "validation_records" {
 }
 
 resource "aws_acm_certificate_validation" "cert_domains" {
-  # provider = aws.acm
+  provider = aws.acm
   certificate_arn         = aws_acm_certificate.site_cert.arn
   validation_record_fqdns = [for record in aws_route53_record.validation_records : record.fqdn]
 }
