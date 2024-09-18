@@ -1,11 +1,11 @@
 variable "s3_origin_path" {
   type        = string
   default     = "/public"
-  description = <<EOT
-The Cloudfront distribution will be configured to serve content from this folder within the S3 bucket.
-A valid value is '/public' or ''. If the value is '', the root of the bucket will be served.
-https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginPath
-EOT
+  description = <<-EOT
+  The Cloudfront distribution will be configured to serve content from this folder within the S3 bucket.
+  A valid value is '/public' or ''. If the value is '', the root of the bucket will be served.
+  https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginPath
+  EOT
 }
 
 variable "s3_bucket_versioning" {
@@ -20,11 +20,11 @@ variable "s3_bucket_name" {
 
 variable "subdomain" {
   type        = string
-  description = <<EOT
-Subdomain of the site. If the site is hosted at www.example.com, the subdomain is www.
-If it is an enpty string, the site will be hosted at the root of the domain.
-An additional 'www.' record will be created.
-EOT
+  description = <<-EOT
+  Subdomain of the site. If the site is hosted at www.example.com, the subdomain is www.
+  If it is an enpty string, the site will be hosted at the root of the domain.
+  An additional 'www.' record will be created.
+  EOT
 }
 
 variable "hosted_zone_domain_name" {
@@ -45,7 +45,7 @@ variable "extra_tags" {
 variable "is_prod" {
   type        = bool
   default    = false
-  description = <<EOT
-If true, will enable Bucket Versioning and Bucket Logging.
-EOT
+  description = <<-EOT
+  If true, will enable Bucket Versioning and Bucket Logging.
+  EOT
 }
