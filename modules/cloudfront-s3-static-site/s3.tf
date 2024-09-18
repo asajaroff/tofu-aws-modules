@@ -15,6 +15,15 @@ resource "aws_s3_bucket_ownership_controls" "this" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "this" {
+  # count = var.s3_bucket_versioning == "true" ? 1 : 0
+  count = var.s3_bucket_versioning ? 1 : 0
+  bucket = aws_s3_bucket.site_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_acl" "site_bucket_acl" {
   bucket = aws_s3_bucket.site_bucket.id
   acl    = "private"
