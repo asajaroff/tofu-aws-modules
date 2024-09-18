@@ -2,9 +2,7 @@ variable "s3_origin_path" {
   type        = string
   default     = "/public"
   description = <<-EOT
-  The Cloudfront distribution will be configured to serve content from this folder within the S3 bucket.
-  A valid value is "/public" or "". If the value is "", the root of the bucket will be served.
-  https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginPath
+  None
   EOT
 }
 
@@ -15,21 +13,22 @@ variable "s3_bucket_versioning" {
 
 variable "s3_bucket_name" {
   type        = string
+  default     = "bucket-name"
   description = "Name of the S3 bucket that will be created to store the static site content"
 }
 
 variable "subdomain" {
   type        = string
+  default     = ""
   description = <<-EOT
-  Subdomain of the site. If the site is hosted at www.example.com, the subdomain is www.
-  If it is an enpty string, the site will be hosted at the root of the domain.
-  An additional "www." record will be created.
+  Subdomain of the site.
   EOT
 }
 
 variable "hosted_zone_domain_name" {
   type        = string
-  description = "Top level domain of the site"
+  default     = "example.com."
+  description = "Top level domain of the site, written with a trailing dot: \"example.com.\""
 }
 
 variable "region" {
@@ -39,6 +38,10 @@ variable "region" {
 
 variable "extra_tags" {
   type        = map(string)
+  default     = {
+    "Environment" = "Development"
+    "Terragrunt"  = "false"
+  }
   description = "Extra tags to be added to the resources created by this module"
 }
 
