@@ -50,5 +50,6 @@ variable "is_prod" {
   default    = false
   description = <<-EOT
   If true, will enable Bucket Versioning and Bucket Logging.
+  Two lines testing
   EOT
 }
