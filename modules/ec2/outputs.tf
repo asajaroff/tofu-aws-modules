@@ -28,7 +28,7 @@ output "private_key" {
 }
 
 output "connection_string" {
-  value       = "ssh -i ~/.ssh/id ec2-user@${aws_instance.this.public_ip}"
+  value       = "ssh -i ~/.ssh/discard ec2-user@${aws_instance.this.public_ip}"
   sensitive   = false
   description = "One-liner to connect to the created instance"
 }
