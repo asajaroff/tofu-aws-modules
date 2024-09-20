@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "this" {
-  ami = data.aws_ami.freebsd.id
+  ami = local.selected_ami
 
   instance_market_options {
     market_type = "spot"
@@ -8,14 +8,22 @@ resource "aws_instance" "this" {
       max_price = 0.005
     }
   }
+  metadata_options {
+    http_tokens = "required"
+  }
 
-  instance_type = "t3.micro"
+  tags = merge(
+    {"Name": var.instance_name},
+    var.tags)
 
-  associate_public_ip_address = true
+  instance_type = var.instance_type
 
-  key_name = aws_key_pair.this.key_name
+  associate_public_ip_address = var.associate_public_ip_address
 
+  key_name = var.create_key == true ? aws_key_pair.this.key_name : ""
   subnet_id = var.subnet_id
 
+  iam_instance_profile        = aws_iam_instance_profile.this.name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+
 }

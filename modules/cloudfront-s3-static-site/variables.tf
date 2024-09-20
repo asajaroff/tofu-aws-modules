@@ -37,8 +37,8 @@ variable "region" {
 }
 
 variable "extra_tags" {
-  type        = map(string)
-  default     = {
+  type = map(string)
+  default = {
     "Environment" = "Development"
     "Terragrunt"  = "false"
   }
@@ -47,7 +47,7 @@ variable "extra_tags" {
 
 variable "is_prod" {
   type        = bool
-  default    = false
+  default     = false
   description = <<-EOT
   If true, will enable Bucket Versioning and Bucket Logging.
   Two lines testing
