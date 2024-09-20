@@ -11,6 +11,6 @@ data "cloudinit_config" "debian" {
   part {
     filename     = "bootstrap.yaml"
     content_type = "text/cloud-config"
-    content = file("${path.module}/config/cloud-config.yaml")
+    content = file("${path.module}/config/cloud-config-debian.yaml")
   }
 }

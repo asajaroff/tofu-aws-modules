@@ -51,3 +51,12 @@ cost: ## Calculates costs of the current module
 keys: ## Sets up the local discardable key
 	tofu output -raw private_key > ~/.ssh/discard
 	chmod 400 ~/.ssh/discard
+
+tflock: ## Generates the lockfile
+	tofu providers lock \
+  -platform=windows_amd64 \
+  -platform=darwin_amd64 \
+  -platform=darwin_arm64 \
+  -platform=linux_amd64 \
+  -platform=linux_arm64
+

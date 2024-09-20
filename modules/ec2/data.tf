@@ -1,5 +1,5 @@
 locals {
-  selected_ami = var.os_family == "debian" ? data.aws_ami.debian.id : (var.os_family == "freebsd" ? data.aws_ami.freebsd.id : data.aws_ami_ubuntu)
+  selected_ami = var.os_family == "debian" ? data.aws_ami.debian.id : (var.os_family == "freebsd" ? data.aws_ami.freebsd.id : data.aws_ami.ubuntu.id)
 }
 
 data "aws_ami" "ubuntu" {
