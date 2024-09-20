@@ -6,9 +6,9 @@ resource "aws_instance" "this" {
     for_each = var.spot_enabled ? [1] : []
     content {
       market_type                    = "spot"
-      instance_interruption_behavior = "stop"
       spot_options {
         max_price = 0.005
+        instance_interruption_behavior = stop
       }
     }
   }
