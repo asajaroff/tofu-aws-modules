@@ -1,11 +1,15 @@
 # EC2
 
-Provides a SSM ready instance for several AMIs providers, including:
+Provisions an EC2 instance of your choosing and some basic software to start with.
+
+## `os_family`
 
 * Debian
 * Ubuntu
 * FreeBSD
 * NetBSD
+
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -43,7 +47,7 @@ No modules.
 | [aws_ami.freebsd](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
-| [cloudinit_config.foobar](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
+| [cloudinit_config.debian](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 
 ## Inputs
 
