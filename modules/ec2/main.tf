@@ -20,6 +20,8 @@ resource "aws_instance" "this" {
 
   associate_public_ip_address = var.associate_public_ip_address
 
+  user_data = data.cloudinit_config.debian.rendered
+
   key_name = var.create_key == true ? aws_key_pair.this.key_name : ""
   subnet_id = var.subnet_id
 

@@ -1,11 +1,11 @@
-data "cloudinit_config" "foobar" {
+data "cloudinit_config" "debian" {
   gzip          = false
   base64_encode = false
 
   part {
-    filename     = "bootstrap.sh"
+    filename     = "bootstrap-debian.sh"
     content_type = "text/x-shellscript"
-    content = file("${path.module}/config/bootstrap.sh")
+    content = file("${path.module}/config/bootstrap-debian.sh")
   }
 
   part {
