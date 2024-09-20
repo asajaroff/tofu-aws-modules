@@ -15,9 +15,8 @@ resource "aws_cloudfront_distribution" "static_site" {
     domain_name              = aws_s3_bucket.site_bucket.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.static_site.id
     origin_id                = local.s3_origin_id
-#   origin_path              = "/${var.s3_origin_path}"
-    origin_path              = var.s3_origin_path
-    }
+    origin_path = var.s3_origin_path
+  }
 
   enabled             = true
   is_ipv6_enabled     = true
@@ -52,19 +51,19 @@ resource "aws_cloudfront_distribution" "static_site" {
   }
 
   custom_error_response {
-    error_code      = 403
-    response_code   = 200
-    response_page_path = "/error-403.html"
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/error.html"
   }
   custom_error_response {
-    error_code      = 404
-    response_code   = 200
-    response_page_path = "/error-404.html"
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/error.html"
   }
 
   # Cache behavior with precedence 0
   ordered_cache_behavior {
-    path_pattern     = "/content/immutable/*"
+    path_pattern     = "/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
     target_origin_id = local.s3_origin_id
@@ -95,14 +94,14 @@ resource "aws_cloudfront_distribution" "static_site" {
   }
 
   tags = merge(
-      {
-        "Name" = "${var.subdomain}.${var.hosted_zone_domain_name}"
-      },
-      var.extra_tags)
+    {
+      "Name" = "${var.subdomain}.${var.hosted_zone_domain_name}"
+    },
+  var.extra_tags)
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.site_cert.arn
-    ssl_support_method = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate.site_cert.arn
+    ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
 }

@@ -25,5 +25,5 @@ resource "aws_route53_record" "site_www" {
   name    = "www.${local.domain_name}"
   type    = "CNAME"
   ttl     = "5"
-  records = [ aws_route53_record.site.fqdn ]
+  records = [aws_route53_record.site.fqdn]
 }
