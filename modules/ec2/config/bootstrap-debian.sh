@@ -8,7 +8,7 @@ case "$(arch)" in
     sudo dpkg -i amazon-ssm-agent.deb
     sudo systemctl enable amazon-ssm-agent
     sudo systemctl start amazon-ssm-agent
-    ;;
+    ;r
   aarch64) # Fix value
     mkdir /tmp/ssm
     cd /tmp/ssm/

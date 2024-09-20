@@ -5,12 +5,12 @@ data "cloudinit_config" "debian" {
   part {
     filename     = "bootstrap-debian.sh"
     content_type = "text/x-shellscript"
-    content = file("${path.module}/config/bootstrap-debian.sh")
+    content      = file("${path.module}/config/bootstrap-debian.sh")
   }
 
   part {
     filename     = "bootstrap.yaml"
     content_type = "text/cloud-config"
-    content = file("${path.module}/config/cloud-config-debian.yaml")
+    content      = file("${path.module}/config/cloud-config-debian.yaml")
   }
 }
