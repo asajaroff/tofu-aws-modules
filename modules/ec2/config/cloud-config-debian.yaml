@@ -13,15 +13,14 @@ ssh_authorized_keys:
 # Install arbitrary packages
 # https://cloudinit.readthedocs.io/en/latest/reference/examples.html#install-arbitrary-packages
 packages:
-  - python
+  - ansible
+  - git
+  - python3
   - neovim
-  - netcat-bsd
+  - netcat-openbsd
   - telnet
   - net-tools
-  - git
-  - neovim
-  - ansible
-
+  - curl
 
 # Run commands on first boot
 # https://cloudinit.readthedocs.io/en/latest/reference/examples.html#run-commands-on-first-boot

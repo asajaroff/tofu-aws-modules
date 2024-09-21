@@ -1,24 +1,37 @@
-variable instance_name {
+variable "instance_name" {
   type        = string
   description = "Name for the instance"
 }
 
+variable "spot_enabled" {
+  type        = string
+  default     = false
+  description = "If true, the instance will be a spot-instance"
+}
 
-variable associate_public_ip_address {
-  type = bool
-  default = false
+variable "spot_price" {
+  type        = number
+  default     = 0.005
+  description = "The maximum hourly price that you're willing to pay for a Spot Instance"
+}
+
+
+
+variable "associate_public_ip_address" {
+  type        = bool
+  default     = false
   description = "If true, will associate a public ip address with the created instance"
 }
 
-variable aws_ssm_enabled {
+variable "aws_ssm_enabled" {
   type        = string
   default     = true
   description = "If true, enables AWS Session Manager for connecting to the instance"
 }
 
-variable instance_type {
-  type = string
-  default = "t3.micro"
+variable "instance_type" {
+  type        = string
+  default     = "t3.micro"
   description = <<EOT
 The instance type, defaults to 't3.micro'
 https://aws.amazon.com/ec2/instance-types/?nc1=h_ls
@@ -26,8 +39,8 @@ EOT
 }
 
 variable "os_arch" {
-  type = string
-  default = "amd64"
+  type        = string
+  default     = "amd64"
   description = <<EOT
 Processor architecture, possible options:
 - amd64
@@ -36,8 +49,8 @@ EOT
 }
 
 variable "os_family" {
-  type = string
-  default = "debian"
+  type        = string
+  default     = "debian"
   description = <<EOT
   The flavor for the EC2 instance to be deployed, possible options:
   - debian
@@ -47,8 +60,8 @@ EOT
 }
 
 variable "tags" {
-    default = {}
-    type = map(string)
+  default = {}
+  type    = map(string)
 }
 
 variable "region" {
