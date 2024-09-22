@@ -32,7 +32,6 @@ Example:
 EOT
 }
 
-
 variable "spot_enabled" {
   type        = string
   default     = false
@@ -55,15 +54,6 @@ variable "aws_ssm_enabled" {
   type        = string
   default     = true
   description = "If true, enables AWS Session Manager for connecting to the instance"
-}
-
-variable "instance_type" {
-  type        = string
-  default     = "t3.micro"
-  description = <<EOT
-The instance type, defaults to 't3.micro'
-https://aws.amazon.com/ec2/instance-types/?nc1=h_ls
-EOT
 }
 
 variable "os_arch" {
