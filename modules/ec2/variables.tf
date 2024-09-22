@@ -11,6 +11,8 @@ variable "instances_map" {
     name                    = string
     instance_type           = string
     disable_api_termination = bool
+    volume_size             = number
+    public                  = true
     }
   ))
   description = <<EOT
