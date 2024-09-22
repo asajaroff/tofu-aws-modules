@@ -12,7 +12,7 @@ variable "instances_map" {
     instance_type           = string
     disable_api_termination = bool
     volume_size             = number
-    public                  = true
+    public                  = bool
     }
   ))
   description = <<EOT
@@ -21,14 +21,18 @@ The map accepts an "instance" object as defined in variables.tf
 Example:
 [
   {
-    name = ".example.com",
+    name = "instance1.example.com",
     instance_type = "t3.micro",
     disable_api_termination = false
+    volume_size = 10
+    public = true
   },
   {
-    name = "mail.example.com",
-    instance_type = "t3.micro",
+    name = "instance2.example.com",
+    instance_type = "t3.large",
     disable_api_termination = false
+    volume_size = 20
+    public = false
   }
 ]
 EOT
