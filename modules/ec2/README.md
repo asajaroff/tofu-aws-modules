@@ -56,10 +56,11 @@ No modules.
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | If true, will associate a public ip address with the created instance | `bool` | `false` | no |
 | <a name="input_aws_ssm_enabled"></a> [aws\_ssm\_enabled](#input\_aws\_ssm\_enabled) | If true, enables AWS Session Manager for connecting to the instance | `string` | `true` | no |
 | <a name="input_create_key"></a> [create\_key](#input\_create\_key) | Create an SSH key for connecting to the EC2 instace | `bool` | `true` | no |
-| <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Name for the instance | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type, defaults to 't3.micro'<br>https://aws.amazon.com/ec2/instance-types/?nc1=h_ls | `string` | `"t3.micro"` | no |
+| <a name="input_instances_map"></a> [instances\_map](#input\_instances\_map) | Map of instances to create.<br>The map accepts an "instance" object as defined in variables.tf<br>Example:<br>[<br>  {<br>    name = ".example.com",<br>    instance\_type = "t3.micro",<br>    disable\_api\_termination = false<br>  },<br>  {<br>    name = "mail.example.com",<br>    instance\_type = "t3.micro",<br>    disable\_api\_termination = false<br>  }<br>] | <pre>list(object({<br>    name                    = string<br>    instance_type           = string<br>    disable_api_termination = bool<br>    }<br>  ))</pre> | n/a | yes |
 | <a name="input_os_arch"></a> [os\_arch](#input\_os\_arch) | Processor architecture, possible options:<br>- amd64<br>- arm64 | `string` | `"amd64"` | no |
 | <a name="input_os_family"></a> [os\_family](#input\_os\_family) | The flavor for the EC2 instance to be deployed, possible options:<br>  - debian<br>  - ubuntu<br>  - freebsd | `string` | `"debian"` | no |
+| <a name="input_pool_name"></a> [pool\_name](#input\_pool\_name) | Name for the instance pool.<br>IAM roles for the instance/s will be created with this variable. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Region where the AWS provider will be configured and deployed | `string` | `"us-east-1"` | no |
 | <a name="input_spot_enabled"></a> [spot\_enabled](#input\_spot\_enabled) | If true, the instance will be a spot-instance | `string` | `false` | no |
 | <a name="input_spot_price"></a> [spot\_price](#input\_spot\_price) | The maximum hourly price that you're willing to pay for a Spot Instance | `number` | `0.005` | no |
@@ -71,10 +72,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_connection_string"></a> [connection\_string](#output\_connection\_string) | One-liner to connect to the created instance |
-| <a name="output_debian_ami"></a> [debian\_ami](#output\_debian\_ami) | Latest AMI for debian 12 |
-| <a name="output_freebsd_ami"></a> [freebsd\_ami](#output\_freebsd\_ami) | Latest AMI for FreeBSD 14.1 |
-| <a name="output_instance_public_ip"></a> [instance\_public\_ip](#output\_instance\_public\_ip) | Public IP address of the instance |
+| <a name="output_instance_info"></a> [instance\_info](#output\_instance\_info) | n/a |
 | <a name="output_private_key"></a> [private\_key](#output\_private\_key) | n/a |
-| <a name="output_ubuntu_ami"></a> [ubuntu\_ami](#output\_ubuntu\_ami) | Latest AMI for ubuntu 24.04 |
 <!-- END_TF_DOCS -->
