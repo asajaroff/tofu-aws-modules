@@ -1,7 +1,37 @@
-variable "instance_name" {
+variable "pool_name" {
   type        = string
-  description = "Name for the instance"
+  description = <<EOT
+Name for the instance pool.
+IAM roles for the instance/s will be created with this variable.
+EOT
 }
+
+variable "instances_map" {
+  type = list(object({
+    name                    = string
+    instance_type           = string
+    disable_api_termination = bool
+    }
+  ))
+  description = <<EOT
+Map of instances to create.
+The map accepts an "instance" object as defined in variables.tf
+Example:
+[
+  {
+    name = ".example.com",
+    instance_type = "t3.micro",
+    disable_api_termination = false
+  },
+  {
+    name = "mail.example.com",
+    instance_type = "t3.micro",
+    disable_api_termination = false
+  }
+]
+EOT
+}
+
 
 variable "spot_enabled" {
   type        = string
@@ -14,8 +44,6 @@ variable "spot_price" {
   default     = 0.005
   description = "The maximum hourly price that you're willing to pay for a Spot Instance"
 }
-
-
 
 variable "associate_public_ip_address" {
   type        = bool

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "this" {
-  name = "${var.instance_name}-ec2-role"
+  name = "${var.pool_name}-ec2-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -25,6 +25,6 @@ resource "aws_iam_role_policy_attachment" "custom" {
 #Attach role to an instance profile
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
 resource "aws_iam_instance_profile" "this" {
-  name = "${var.instance_name}-iam-instance-profile"
+  name = "${var.pool_name}-iam-instance-profile"
   role = aws_iam_role.this.name
 }
