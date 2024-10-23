@@ -1,3 +1,12 @@
+resource "aws_cloudfront_function" "pretty_urls" {
+  count   = var.pretty_urls == true ? 1 : 0
+  name    = "PrettyURLs-${var.hosted_zone_domain_name}"
+  runtime = "cloudfront-js-2.0"
+  comment = "PrettyURLs for ${var.subdomain}.${var.hosted_zone_domain_name}"
+  publish = true
+  code    = file("${path.module}/templates/prettyUrls.js")
+}
+
 resource "aws_cloudfront_origin_access_control" "static_site" {
   name                              = "${aws_s3_bucket.site_bucket.id}-s3-cloudfront-oac"
   description                       = "Access Cloudfront to operate on the ${aws_s3_bucket.site_bucket.id} bucket"
@@ -15,7 +24,7 @@ resource "aws_cloudfront_distribution" "static_site" {
     domain_name              = aws_s3_bucket.site_bucket.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.static_site.id
     origin_id                = local.s3_origin_id
-    origin_path = var.s3_origin_path
+    origin_path              = var.s3_origin_path
   }
 
   enabled             = true
@@ -75,6 +84,11 @@ resource "aws_cloudfront_distribution" "static_site" {
       cookies {
         forward = "none"
       }
+    }
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.pretty_urls.arn
     }
 
     min_ttl                = 0
