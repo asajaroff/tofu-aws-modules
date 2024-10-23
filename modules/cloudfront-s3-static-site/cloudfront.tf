@@ -1,5 +1,4 @@
 resource "aws_cloudfront_function" "pretty_urls" {
-  count   = var.pretty_urls == true ? 1 : 0
   name    = "PrettyURLs-${var.hosted_zone_domain_name}"
   runtime = "cloudfront-js-2.0"
   comment = "PrettyURLs for ${var.subdomain}.${var.hosted_zone_domain_name}"
