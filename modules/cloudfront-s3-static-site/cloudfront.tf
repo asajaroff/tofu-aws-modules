@@ -1,5 +1,5 @@
 resource "aws_cloudfront_function" "pretty_urls" {
-  name    = "PrettyURLs"
+  name    = "PrettyURLs-${var.subdomain}.${var.hosted_zone_domain_name}"
   runtime = "cloudfront-js-2.0"
   comment = "PrettyURLs for ${var.subdomain}.${var.hosted_zone_domain_name}"
   publish = true
