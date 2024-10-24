@@ -50,6 +50,14 @@ variable "is_prod" {
   default     = false
   description = <<-EOT
   If true, will enable Bucket Versioning and Bucket Logging.
-  Two lines testing
+  EOT
+}
+
+variable "pretty_urls" {
+  type        = bool
+  default     = true
+  description = <<-EOT
+  If true, will deploy a cloudfront function to generate pretty URLs.
+  https://en.wikipedia.org/wiki/Clean_URL
   EOT
 }
