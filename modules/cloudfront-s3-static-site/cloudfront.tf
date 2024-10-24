@@ -1,7 +1,7 @@
 resource "aws_cloudfront_function" "pretty_urls" {
-  name    = "PrettyURLs-${var.subdomain}.${var.hosted_zone_domain_name}"
+  name    = "PrettyURLs-${trimsuffix(replace("${var.subdomain}.${var.hosted_zone_domain_name}", ".", "-"), "-")}"
   runtime = "cloudfront-js-2.0"
-  comment = "PrettyURLs for ${var.subdomain}.${var.hosted_zone_domain_name}"
+  comment = "Clean URLs for ${var.subdomain}.${var.hosted_zone_domain_name}"
   publish = true
   code    = file("${path.module}/templates/prettyUrls.js")
 }
