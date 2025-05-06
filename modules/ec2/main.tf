@@ -24,7 +24,7 @@ resource "aws_instance" "this" {
       market_type = "spot"
       spot_options {
         max_price                      = 0.005
-        instance_interruption_behavior = stop
+        instance_interruption_behavior = "stop"
       }
     }
   }

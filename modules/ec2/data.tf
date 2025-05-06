@@ -41,6 +41,6 @@ data "aws_ami" "freebsd" { # https://eu-west-1.console.aws.amazon.com/ec2/home?r
   owners = ["782442783595"] # https://wiki.debian.org/Cloud/AmazonEC2Image/
 }
 
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
+# data "aws_vpc" "selected" {
+#   id = var.vpc_id
+# }
