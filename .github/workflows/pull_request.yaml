@@ -1,66 +1,122 @@
+name: 'OpenTofu Plan'
+
 on:
   pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+      - '**.hcl'
+
+env:
+  tf_actions_working_dir: '.'  # Set this to your terraform directory
 
 defaults:
   run:
     working-directory: ${{ env.tf_actions_working_dir }}
+
 permissions:
+  contents: read
   pull-requests: write
-steps:
-- uses: actions/checkout@v3
-- uses: opentofu/setup-opentofu@v1
 
-- name: OpenTofu fmt
-  id: fmt
-  run: tofu fmt -check
-  continue-on-error: true
+jobs:
+  tofu-plan:
+    name: 'OpenTofu Plan'
+    runs-on: ubuntu-latest
 
-- name: OpenTofu Init
-  id: init
-  run: tofu init
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-- name: OpenTofu Validate
-  id: validate
-  run: tofu validate -no-color
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
 
-- name: OpenTofu Plan
-  id: plan
-  run: tofu plan -no-color
-  continue-on-error: true
+      - name: OpenTofu Format Check
+        id: fmt
+        run: tofu fmt -check
+        continue-on-error: true
 
-- uses: actions/github-script@v6
-  if: github.event_name == 'pull_request'
-  env:
-    PLAN: "tofu\n${{ steps.plan.outputs.stdout }}"
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    script: |
-      const output = `#### OpenTofu Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-      #### OpenTofu Initialization ⚙️\`${{ steps.init.outcome }}\`
-      #### OpenTofu Validation 🤖\`${{ steps.validate.outcome }}\`
-      <details><summary>Validation Output</summary>
+      - name: OpenTofu Init
+        id: init
+        run: tofu init
 
-      \`\`\`\n
-      ${{ steps.validate.outputs.stdout }}
-      \`\`\`
+      - name: OpenTofu Validate
+        id: validate
+        run: tofu validate -no-color
 
-      </details>
+      - name: OpenTofu Plan
+        id: plan
+        run: tofu plan -no-color -out=tfplan
+        continue-on-error: true
 
-      #### OpenTofu Plan 📖\`${{ steps.plan.outcome }}\`
+      - name: Comment PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "tofu\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### OpenTofu Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### OpenTofu Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### OpenTofu Validation 🤖\`${{ steps.validate.outcome }}\`
 
-      <details><summary>Show Plan</summary>
+            <details><summary>Validation Output</summary>
 
-      \`\`\`\n
-      ${process.env.PLAN}
-      \`\`\`
+            \`\`\`
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
 
-      </details>
+            </details>
 
-      *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            #### OpenTofu Plan 📖\`${{ steps.plan.outcome }}\`
 
-      github.rest.issues.createComment({
-        issue_number: context.issue.number,
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        body: output
-      })
+            <details><summary>Show Plan</summary>
+
+            \`\`\`
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            // Delete previous comments from this workflow
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComments = comments.data.filter(comment =>
+              comment.user.login === 'github-actions[bot]' &&
+              comment.body.includes('OpenTofu Format and Style')
+            );
+
+            for (const comment of botComments) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              });
+            }
+
+            // Create new comment
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+
+      - name: Upload Plan Artifact
+        if: steps.plan.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ github.event.pull_request.number }}
+          path: ${{ env.tf_actions_working_dir }}/tfplan
+          retention-days: 30
