@@ -9,8 +9,3 @@ output "instance_info" {
     }
   }
 }
-
-output "private_key" {
-  value     = tls_private_key.this[0].private_key_openssh
-  sensitive = true
-}

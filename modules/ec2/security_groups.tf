@@ -12,11 +12,12 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
 
   provisioner "local-exec" {
-    command = "dig +short myip.opendns.com @resolver1.opendns.com"
+    command = "dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com"
   }
 
   security_group_id = aws_security_group.allow_ssh.id
-  cidr_ipv4         = "31.201.10.77/32"
+  # cidr_ipv4         = "31.201.10.77/32"
+  cidr_ipv4         = var.allow_ssh_ip
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22

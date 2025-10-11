@@ -19,7 +19,7 @@ data "aws_ami" "debian" {
   most_recent = true
   filter {
     name   = "name"
-    values = ["debian-12-${var.os_arch}-*"]
+    values = ["debian-13-${var.os_arch}-*"]
   }
   filter {
     name   = "virtualization-type"

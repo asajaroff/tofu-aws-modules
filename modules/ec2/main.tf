@@ -3,7 +3,6 @@ resource "aws_instance" "this" {
   for_each                    = { for instance in var.instances_map : instance.name => instance }
   instance_type               = each.value.instance_type
   ami                         = local.selected_ami
-  key_name                    = var.create_key == true ? aws_key_pair.this.key_name : ""
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
   user_data                   = data.cloudinit_config.debian.rendered

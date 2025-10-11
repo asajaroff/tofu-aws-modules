@@ -21,6 +21,3 @@ case "$(arch)" in
     echo "Could not identify processor architecture"
     exit 0
 esac
-
-curl -fsSL https://code-server.dev/install.sh | sh
-

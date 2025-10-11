@@ -38,6 +38,14 @@ Example:
 EOT
 }
 
+variable "allow_ssh_ip" {
+  type        = string
+  description = <<EOT
+IP address that will be allowed to SSH into the box.
+Format is "123.123.123.123/32"
+EOT
+}
+
 variable "spot_enabled" {
   type        = string
   default     = false
