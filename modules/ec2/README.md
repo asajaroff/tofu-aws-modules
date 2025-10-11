@@ -2,12 +2,8 @@
 
 Provisions an EC2 instance of your choosing and some basic software to start with.
 
-## `os_family`
-
-* Debian
-* Ubuntu
-* FreeBSD
-* NetBSD
+## TODO
+- [ ] Update to debian 13
 
 
 <!-- BEGIN_TF_DOCS -->
