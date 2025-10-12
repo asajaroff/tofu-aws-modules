@@ -4,6 +4,7 @@ Provisions an EC2 instance of your choosing and some basic software to start wit
 
 ## TODO
 - [ ] Update to debian 13
+- [ ] Changing names recreates instances
 
 
 <!-- BEGIN_TF_DOCS -->
