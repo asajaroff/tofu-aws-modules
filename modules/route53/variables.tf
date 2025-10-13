@@ -1,9 +1,9 @@
-variable hosted_zone {
+variable "hosted_zone" {
   type        = string
   description = "Top level domain for the hosted zone, either 'example.com' or 'subdomain.example.com'"
 }
 
-variable is_private {
+variable "is_private" {
   type        = bool
   default     = "false"
   description = "Boolean to check if the target hosted zone is private"

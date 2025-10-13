@@ -30,4 +30,4 @@ terraform-generate-docs: ## Outputs the command for generating documentation
 	@echo "terraform-docs markdown table --output-file README.md ."
 
 terraform-format: ## Formats the repository according to Hashicorp's format standards
-	terraform fmt -recursive
+	tofu fmt -recursive
