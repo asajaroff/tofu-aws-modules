@@ -1,11 +1,11 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh_ec2"
+  name        = "${var.pool_name} SSH ingress rule"
   description = "Allow SSH inbound traffic and all outbound traffic"
   vpc_id      = data.aws_vpc.selected.id
 
   tags = {
-    Name = "allow_ssh"
+    Name = "${var.pool_name}_ssh"
   }
 }
 
