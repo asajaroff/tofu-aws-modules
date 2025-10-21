@@ -10,13 +10,10 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
-
-  provisioner "local-exec" {
-    command = "dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com"
-  }
+  for_each = toset(var.allow_ssh_ips)
 
   security_group_id = aws_security_group.allow_ssh.id
-  cidr_ipv4         = var.allow_ssh_ip == "" ? "123.123.123.123/32" : var.allow_ssh_ip
+  cidr_ipv4         = each.value
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22

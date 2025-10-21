@@ -38,11 +38,11 @@ Example:
 EOT
 }
 
-variable "allow_ssh_ip" {
-  type        = string
-  default     = "192.168.1.1/32"
+variable "allow_ssh_ips" {
+  type        = list(string)
+  default     = ["192.168.1.1/32"]
   description = <<EOT
-IP address that will be allowed to SSH into the box.
+List IP address that will be allowed to SSH into the box.
 Format is "123.123.123.123/32"
 EOT
 }
