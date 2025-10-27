@@ -6,8 +6,8 @@ variable "tags" {
 
 variable "name" {
   type        = string
-  default     = "tofu-aws-modules-tests"
-  description = "Name for the VPC"
+  default     = "development-ar-do-ams3"
+  description = "Name for the Kubernetes cluster"
 }
 
 variable "region" {
@@ -24,7 +24,9 @@ variable "do_token" {
 variable "hosted_zone" {
   type        = string
   default     = ""
-  description = "AWS Hosted Zone"
+  description = <<EOD
+The AWS hosted zone ID in Route53 where the domain controlled by cert-manager lives.
+EOD
 }
 
 variable "create_example_app" {
@@ -45,10 +47,16 @@ variable "letsencrypt_email" {
   description = "Email address for Let's Encrypt ACME registration"
 }
 
-variable "letsencrypt_server" {
+variable "letsencrypt_server_prod" {
   type        = string
   default     = "https://acme-v02.api.letsencrypt.org/directory"
   description = "Let's Encrypt ACME server URL (use staging for testing: https://acme-staging-v02.api.letsencrypt.org/directory)"
+}
+
+variable "letsencrypt_server_staging" {
+  type        = string
+  default     = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  description = "Let's Encrypt ACME server URL -staging-"
 }
 
 variable "aws_region" {

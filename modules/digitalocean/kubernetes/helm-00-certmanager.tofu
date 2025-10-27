@@ -101,7 +101,7 @@ resource "aws_iam_user_policy" "certmanager" {
   policy = data.aws_iam_policy_document.certmanager.json
 }
 
-resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
+resource "kubernetes_manifest" "letsencrypt_clusterissuer_prod" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
@@ -110,7 +110,48 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
     }
     spec = {
       acme = {
-        server = var.letsencrypt_server
+        server = var.letsencrypt_server_prod
+        email  = var.letsencrypt_email
+        privateKeySecretRef = {
+          name = "letsencrypt-account-key"
+        }
+        solvers = [
+          {
+            dns01 = {
+              route53 = {
+                region = var.aws_region
+                accessKeyIDSecretRef = {
+                  name = kubernetes_secret.certmanager_aws_credentials.metadata[0].name
+                  key  = "access-key-id"
+                }
+                secretAccessKeySecretRef = {
+                  name = kubernetes_secret.certmanager_aws_credentials.metadata[0].name
+                  key  = "secret-access-key"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_secret.certmanager_aws_credentials
+  ]
+}
+
+resource "kubernetes_manifest" "letsencrypt_clusterissuer_staging" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "ClusterIssuer"
+    metadata = {
+      name = "letsencrypt-staging"
+    }
+    spec = {
+      acme = {
+        server = var.letsencrypt_server_staging
         email  = var.letsencrypt_email
         privateKeySecretRef = {
           name = "letsencrypt-account-key"
