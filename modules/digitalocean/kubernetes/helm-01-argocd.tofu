@@ -10,13 +10,12 @@ resource "helm_release" "argocd" {
 
   set {
     name  = "crds.enabled"
-    value = "true"
+    value = "false"
   }
 
   values = [
     file("config/argocd.yaml")
   ]
-
 
   depends_on = [helm_release.cert-manager]
 }
