@@ -67,11 +67,11 @@ data "aws_iam_policy_document" "certmanager" {
     resources = [
       "arn:aws:route53:::hostedzone/${var.hosted_zone}",
     ]
-   # condition {
-   #    test     = "ForAllValues:StringEquals"
-   #    variable = "route53:ChangeResourceRecordSetsRecordTypes"
-   #    values   = ["TXT"]
-   #  }
+   condition {
+     test     = "ForAllValues:StringEquals"
+     variable = "route53:ChangeResourceRecordSetsRecordTypes"
+     values   = ["TXT"]
+   }
 
   }
 

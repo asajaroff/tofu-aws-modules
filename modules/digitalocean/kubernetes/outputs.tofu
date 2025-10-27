@@ -35,8 +35,7 @@ output "certmanager_iam_secret_access_key" {
   description = "The IAM secret access key for cert-manager Route53 integration"
   sensitive   = true
 }
-
-output "letsencrypt_clusterissuer_name" {
-  value       = kubernetes_manifest.letsencrypt_clusterissuer.manifest.metadata.name
-  description = "The name of the Let's Encrypt ClusterIssuer"
-}
+# output "letsencrypt_clusterissuer_name" {
+#   value       = kubernetes_manifest.letsencrypt_clusterissuer.manifest.metadata.name
+#   description = "The name of the Let's Encrypt ClusterIssuer"
+# }
