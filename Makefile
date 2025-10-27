@@ -17,7 +17,7 @@ new: ## Creates a new module - `make new MODULE=module-name`
 
 new-blank: ## Creates a new module - `make new MODULE=module-name`
 	@mkdir -p modules/${MODULE}/{docs,templates,test}
-	@touch modules/${MODULE}/{main,providers,outputs,variables}.tf
+	@touch modules/${MODULE}/{main,providers,outputs,variables}.tofu
 	@echo "# ${MODULE}" >> modules/${MODULE}/README.md
 	@git checkout -b feat/${MODULE}
 	@cd modules/${MODULE}
