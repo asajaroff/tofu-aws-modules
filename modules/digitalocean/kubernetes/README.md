@@ -1,4 +1,4 @@
-# DigitalOcean Kubernetes Cluster with nginx-ingress
+# DigitalOcean Kubernetes Cluster
 
 This module creates a DigitalOcean Kubernetes cluster with nginx-ingress controller pre-installed via Helm.
 
