@@ -48,6 +48,7 @@
 #       ISSUE_INDEXER_TYPE: bleve
 #       REPO_INDEXER_ENABLED: true
 # EOV
+
 #   ]
 
 #   set {
