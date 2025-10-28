@@ -39,7 +39,7 @@ init: validate  ## Generates a plan with the default.tfvars variable
 		-json \
 		-input=false \
 		-compact-warnings \
-		$(TOFU_GLOBAL_OPTS)
+		$(TOFU_GLOBAL_OPTS)\
 
 .PHONY: plan
 plan: ## Generates a plan with the default.tfvars variable
@@ -108,7 +108,7 @@ tflock: ## Generates the lockfile
   -platform=linux_arm64
 
 .PHONY: provision
-provision: target-cluster target-base target-clusterissuers
+provision: target-cluster target-base target-clusterissuers target-rest ## Provisions a cluster step by step
 
 
 .PHONY: target-cluster
@@ -139,6 +139,13 @@ target-clusterissuers:
 		-target kubernetes_manifest.letsencrypt_clusterissuer_prod \
 		-target aws_iam_user_policy.certmanager \
 		-target kubernetes_manifest.letsencrypt_clusterissuer_staging \
+		--var-file default.tfvars \
+		-auto-approve=true \
+		-no-color
+
+.PHONY: target-rest
+target-rest:
+	AWS_PROFILE=personal $(TOFU_CMD) $(TOFU_OPTS) apply \
 		--var-file default.tfvars \
 		-auto-approve=true \
 		-no-color

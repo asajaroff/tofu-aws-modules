@@ -1,0 +1,27 @@
+gitea:
+  config:
+    APP_NAME: "Gitea - sources for development.ar"
+    repository:
+      ROOT: "~/gitea-repositories"
+    repository.pull-request:
+      WORK_IN_PROGRESS_PREFIXES: "WIP:,[WIP]:"
+
+  admin:
+    username: "galera"
+    password: "AReallyAwesomeGiteaPassword"
+    email: "galera@pm.me"
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+  hosts:
+    - host: git.development.ar
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gitea-tls
+      hosts:
+        - git.development.ar
