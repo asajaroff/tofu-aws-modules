@@ -10,12 +10,28 @@ resource "helm_release" "argocd" {
 
   set {
     name  = "crds.enabled"
-    value = "false"
+    value = "true"
   }
 
-  values = [
-    file("config/argocd.yaml")
-  ]
+values = [ <<EOV
+global:
+  domain: argocd.development.ar
+
+certificate:
+  enabled: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    tls: true
+
+EOV
+]
 
   depends_on = [helm_release.cert-manager]
 }

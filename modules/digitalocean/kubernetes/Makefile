@@ -42,7 +42,7 @@ init: validate  ## Generates a plan with the default.tfvars variable
 		$(TOFU_GLOBAL_OPTS)
 
 .PHONY: plan
-plan: init ## Generates a plan with the default.tfvars variable
+plan: ## Generates a plan with the default.tfvars variable
 	$(TOFU_CMD) plan \
 		--var-file default.tfvars \
 		-out tfplan \
@@ -107,15 +107,38 @@ tflock: ## Generates the lockfile
   -platform=linux_amd64 \
   -platform=linux_arm64
 
+.PHONY: provision
+provision: target-cluster target-cert-manager target-clusterissuers
 
+
+.PHONY: target-cluster
+target-cluster:
+	$(TOFU_CMD) apply \
+		-target digitalocean_kubernetes-cluster.this \
+		--var-file default.tfvars \
+		-auto-approve \
+		-consolidate-errors \
+		-no-color \
+		-json
+
+.PHONY: target-cert-manager
+target-cert-manager:
+	$(TOFU_CMD) apply \
+		-target helm_release.cert-manager \
+		-target helm_release.nginx-ingress \
+		--var-file default.tfvars \
+		-input=false \
+		-auto-approve \
+		-consolidate-errors \
+		-no-color \
+		-json
+
+.PHONY: target-clusterissuers
 target-clusterissuers:
 	AWS_PROFILE=personal $(TOFU_CMD) $(TOFU_OPTS) apply \
-		--var-file default.tfvars \
 		-target kubernetes_manifest.letsencrypt_clusterissuer_prod \
-		-auto-approve=true \
-		-no-color
-	AWS_PROFILE=personal $(TOFU_CMD) $(TOFU_OPTS) apply \
-		--var-file default.tfvars \
+		-target aws_iam_user_policy.certmanager \
 		-target kubernetes_manifest.letsencrypt_clusterissuer_staging \
+		--var-file default.tfvars \
 		-auto-approve=true \
 		-no-color
