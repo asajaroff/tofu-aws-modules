@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ricota-development-ar
+  namespace: cert-manager
+spec:
+  secretName: ricota-development-ar-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  dnsNames:
+    - ricota.development.ar

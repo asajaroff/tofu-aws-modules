@@ -108,7 +108,7 @@ tflock: ## Generates the lockfile
   -platform=linux_arm64
 
 .PHONY: provision
-provision: target-cluster target-cert-manager target-clusterissuers
+provision: target-cluster target-base target-clusterissuers
 
 
 .PHONY: target-cluster
@@ -121,8 +121,8 @@ target-cluster:
 		-no-color \
 		-json
 
-.PHONY: target-cert-manager
-target-cert-manager:
+.PHONY: target-base
+target-base:
 	$(TOFU_CMD) apply \
 		-target helm_release.cert-manager \
 		-target helm_release.nginx-ingress \
