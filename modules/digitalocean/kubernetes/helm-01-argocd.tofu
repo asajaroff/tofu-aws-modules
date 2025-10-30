@@ -16,7 +16,6 @@ resource "helm_release" "argocd" {
   depends_on = [
     digitalocean_kubernetes_cluster.this,
     helm_release.cert-manager,
-    helm_release.nginx_ingress,
-    data.kubernetes_service.nginx_ingress
+    helm_release.nginx_ingress
   ]
 }

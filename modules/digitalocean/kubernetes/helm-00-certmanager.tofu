@@ -102,6 +102,8 @@ resource "aws_iam_user_policy" "certmanager" {
 }
 
 resource "kubernetes_manifest" "letsencrypt_clusterissuer_prod" {
+  computed_fields = ["spec"]
+
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
@@ -143,6 +145,8 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer_prod" {
 }
 
 resource "kubernetes_manifest" "letsencrypt_clusterissuer_staging" {
+  computed_fields = ["spec"]
+
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"

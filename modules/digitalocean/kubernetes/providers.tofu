@@ -27,19 +27,19 @@ provider "aws" {
 # Configure Helm provider using the cluster credentials
 provider "helm" {
   kubernetes {
-    host  = digitalocean_kubernetes_cluster.this.endpoint
-    token = digitalocean_kubernetes_cluster.this.kube_config[0].token
-    cluster_ca_certificate = base64decode(
+    host  = try(digitalocean_kubernetes_cluster.this.endpoint, "https://localhost")
+    token = try(digitalocean_kubernetes_cluster.this.kube_config[0].token, "")
+    cluster_ca_certificate = try(base64decode(
       digitalocean_kubernetes_cluster.this.kube_config[0].cluster_ca_certificate
-    )
+    ), "")
   }
 }
 
 # Configure Kubernetes provider using the cluster credentials
 provider "kubernetes" {
-  host  = digitalocean_kubernetes_cluster.this.endpoint
-  token = digitalocean_kubernetes_cluster.this.kube_config[0].token
-  cluster_ca_certificate = base64decode(
-    digitalocean_kubernetes_cluster.this.kube_config[0].cluster_ca_certificate
-  )
+  host  = try(digitalocean_kubernetes_cluster.this.endpoint, "https://localhost")
+  token = try(digitalocean_kubernetes_cluster.this.kube_config[0].token, "")
+  cluster_ca_certificate = try(base64decode(
+      digitalocean_kubernetes_cluster.this.kube_config[0].cluster_ca_certificate
+    ), "")
 }

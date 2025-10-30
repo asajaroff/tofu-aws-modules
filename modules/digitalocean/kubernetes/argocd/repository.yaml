@@ -10,4 +10,6 @@ stringData:
   url: git@github.com:asajaroff/argocd-live.git
   sshPrivateKey: |
     -----BEGIN OPENSSH PRIVATE KEY-----
+    Your key should not be pushed to a repository, but this
+    attempts to show how formatting goes for this resource.
     -----END OPENSSH PRIVATE KEY-----
