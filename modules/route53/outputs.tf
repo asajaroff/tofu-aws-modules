@@ -1,4 +1,4 @@
-output zone_id {
+output "zone_id" {
   value       = data.aws_route53_zone.selected
   sensitive   = true
   description = "Hosted zone ID for the target domain"

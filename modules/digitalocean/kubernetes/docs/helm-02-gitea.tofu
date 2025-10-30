@@ -1,0 +1,92 @@
+# Install Gitea using Helm
+resource "helm_release" "gitea" {
+  name       = "gitea"
+  repository = "https://dl.gitea.com/charts/"
+  chart      = "gitea"
+  namespace  = "gitea"
+  version    = "v12.4.0"
+
+  create_namespace = true
+
+  # values = [file("${path.module}/config/gitea.yaml")]
+
+  values = [ <<EOV
+gitea:
+  config:
+    APP_NAME: "Gitea - sources for development.ar"
+    database:
+      DB_TYPE: postgres
+    repository:
+      ROOT: "~/gitea-repositories"
+    repository.pull-request:
+      WORK_IN_PROGRESS_PREFIXES: "WIP:,[WIP]:"
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
+
+  admin:
+    username: "galera"
+    password: "AReallyAwesomeGiteaPassword"
+    email: "galera@pm.me"
+
+# Disable HA dependencies
+valkey-cluster:
+  enabled: false
+postgresql-ha:
+  enabled: false
+
+# Enable single-instance dependencies
+valkey:
+  enabled: true
+postgresql:
+  enabled: true
+
+# Configure persistence
+persistence:
+  enabled: true
+  size: 10Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+  hosts:
+    - host: git.development.ar
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gitea-tls
+      hosts:
+        - git.development.ar
+EOV
+  ]
+
+
+  depends_on = [
+    digitalocean_kubernetes_cluster.this,
+    helm_release.cert-manager
+  ]
+}
+
+# # Data source to get the Load Balancer service details
+# data "kubernetes_service" "nginx_ingress" {
+#   metadata {
+#     name      = "ingress-nginx-controller"
+#     namespace = "ingress-nginx"
+#   }
+
+#   depends_on = [helm_release.gitea]
+# }
+
+resource "aws_route53_record" "gitea" {
+  zone_id = var.hosted_zone
+  name    = "git.development.ar"
+  type    = "A"
+  ttl     = 300
+  records = [ data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].ip ]
+  depends_on = [
+    helm_release.gitea
+  ]
+}

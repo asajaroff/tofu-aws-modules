@@ -17,7 +17,7 @@ new: ## Creates a new module - `make new MODULE=module-name`
 
 new-blank: ## Creates a new module - `make new MODULE=module-name`
 	@mkdir -p modules/${MODULE}/{docs,templates,test}
-	@touch modules/${MODULE}/{main,providers,outputs,variables}.tf
+	@touch modules/${MODULE}/{main,providers,outputs,variables}.tofu
 	@echo "# ${MODULE}" >> modules/${MODULE}/README.md
 	@git checkout -b feat/${MODULE}
 	@cd modules/${MODULE}
@@ -30,4 +30,4 @@ terraform-generate-docs: ## Outputs the command for generating documentation
 	@echo "terraform-docs markdown table --output-file README.md ."
 
 terraform-format: ## Formats the repository according to Hashicorp's format standards
-	terraform fmt -recursive
+	tofu fmt -recursive

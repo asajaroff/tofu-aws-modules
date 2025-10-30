@@ -1,0 +1,47 @@
+global:
+  domain: argocd.development.ar
+
+certificate:
+  enabled: true
+
+configs:
+  # RBAC Configuration
+  rbac:
+    # Default policy: readonly for all authenticated users
+    policy.default: role:readonly
+    policy.csv: |
+      # Admin group has full access
+      g, admin, role:admin
+
+      # You can add more custom roles here as needed
+      # Example: p, role:dev-team, applications, *, default/*, allow
+      # Example: g, developers, role:dev-team
+
+  # Admin password configuration
+  # secret:
+    # IMPORTANT: Change this password after first login!
+    # This is a bcrypt hash of "changeme123456"
+    # Generate new hash with: argocd account bcrypt --password <your-password>
+    # argocdServerAdminPassword: "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa"
+    # argocdServerAdminPasswordMtime: "2025-01-01T00:00:00Z"
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    tls: true
+    hostname: argocd.development.ar
+
+  ingressGrpc:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    tls: true
+    hostname: grpc.argocd.development.ar
+

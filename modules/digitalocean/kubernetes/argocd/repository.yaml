@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-live
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  url: git@github.com:asajaroff/argocd-live.git
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    Your key should not be pushed to a repository, but this
+    attempts to show how formatting goes for this resource.
+    -----END OPENSSH PRIVATE KEY-----

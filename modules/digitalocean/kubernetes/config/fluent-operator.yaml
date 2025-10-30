@@ -1,0 +1,347 @@
+containerRuntime: containerd
+Kubernetes: true
+
+operator:
+  initcontainer:
+    image:
+      registry: docker.io
+      repository: docker
+      tag: "20.10"
+
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
+  image:
+    registry: ghcr.io
+    repository: fluent/fluent-operator/fluent-operator
+    tag: ""
+
+  # If set to false, this will disable the creation of ClusterRole, ClusterRoleBinding,
+  # Deployment, and ServiceAccount resources to avoid conflicts when deploying multiple instances.
+  enable: true
+
+  logPath:
+    containerd: /var/log
+
+  service:
+    enable: true
+    type: ClusterIP
+    portName: metrics
+    port: 8080
+    annotations: {}
+    labels: {}
+
+  serviceMonitor:
+    enable: true
+    interval: 30s
+    path: /metrics
+    scrapeTimeout: 10s
+    secure: false
+    tlsConfig: {}
+    relabelings: []
+    metricRelabelings: []
+
+fluentbit:
+  crdsEnable: true
+  enable: true
+  serviceMonitor:
+    enable: false
+    interval: 30s
+    path: /api/v2/metrics/prometheus
+    scrapeTimeout: 10s
+    secure: false
+    tlsConfig: {}
+    relabelings: []
+    metricRelabelings: []
+  livenessProbe:
+    enabled: true
+    httpGet:
+      port: 2020
+      path: /
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 15
+    successThreshold: 1
+    failureThreshold: 8
+
+  image:
+    registry: ghcr.io
+    repository: fluent/fluent-operator/fluent-bit
+    # renovate: datasource=docker depName=ghcr.io/fluent/fluent-operator/fluent-bit
+    tag: "4.1.1"
+
+  input:
+    tail:
+      enable: true
+      refreshIntervalSeconds: 10
+      memBufLimit: 100MB
+      bufferMaxSize: ""
+      bufferChunkSize: ""
+      path: "/var/log/containers/*.log"
+      skipLongLines: true
+      skipEmptyLines: true
+      readFromHead: false
+      # Use storageType as "filesystem" if you want to use filesystem as the buffering mechanism for tail input.
+      storageType: memory
+      pauseOnChunksOverlimit: "off"
+      # multiline.parser
+      # multilineParser: "docker, cri"
+    systemd:
+      enable: true
+      systemdFilter:
+        enable: true
+        filters: []
+      path: "/var/log/journal"
+      includeKubelet: true
+      stripUnderscores: "off"
+      # Use storageType as "filesystem" if you want to use filesystem as the buffering mechanism for systemd input.
+      storageType: memory
+      pauseOnChunksOverlimit: "off"
+    nodeExporterMetrics: {}
+    # uncomment below nodeExporterMetrics section if you want to collect node exporter metrics
+    #   nodeExporterMetrics:
+    #     tag: node_metrics
+    #     scrapeInterval: 15s
+    #     path:
+    #       procfs: /host/proc
+    #       sysfs: /host/sys
+    fluentBitMetrics: {}
+    # uncomment below fluentBitMetrics section if you want to collect fluentBit metrics
+  #    fluentBitMetrics:
+  #      scrapeInterval: "2"
+  #      scrapeOnStart: true
+  #      tag: "fb.metrics"
+
+  # Configure the output plugin parameter in FluentBit.
+  # You can set enable to true to output logs to the specified location.
+  output:
+    #  You can find more supported output plugins here: https://github.com/fluent/fluent-operator/tree/master/docs/plugins/fluentbit/output
+    es:
+      enable: false
+      host: "<Elasticsearch url like elasticsearch-logging-data.kubesphere-logging-system.svc>"
+      port: 9200
+      logstashPrefix: ks-logstash-log
+      bufferSize: 20MB
+      traceError: true
+    #      logstashPrefixKey: ks-logstash-log
+    #      suppressTypeName: "On"
+    #      path: ""
+    #      bufferSize: "4KB"
+    #      index: "fluent-bit"
+    #      httpUser:
+    #      httpPassword:
+    #      logstashFormat: true
+    #      replaceDots: false
+    #      writeOperation: upsert
+    #      tls:
+    #        enable: false
+    #        verify: On
+    #        debug: 1
+    #        caFile: "<Absolute path to CA certificate file>"
+    #        caPath: "<Absolute path to scan for certificate files>"
+    #        crtFile: "<Absolute path to private Key file>"
+    #        keyFile: "<Absolute path to private Key file>"
+    #        keyPassword:
+    #        vhost: "<Hostname to be used for TLS SNI extension>"
+    kafka:
+      enable: false
+      logLevel: info
+      brokers: "<kafka broker list like xxx.xxx.xxx.xxx:9092,yyy.yyy.yyy.yyy:9092>"
+      topics: ks-log
+    opentelemetry: {}
+    # You can configure the opentelemetry-related configuration here
+    opensearch: {}
+    # You can configure the opensearch-related configuration here
+    stdout:
+      enable: false
+    # Uncomment the following section to enable Prometheus metrics exporter.
+    prometheusMetricsExporter: {}
+    #    prometheusMetricsExporter:
+    #      match: "fb.metrics"
+    #      metricsExporter:
+    #        host: "0.0.0.0"
+    #        port: 2020
+    #        addLabels:
+    #          app: "fluentbit"
+
+    # Loki fluentbit ClusterOutput, to be encapsulated in fluentbit config
+    # See https://github.com/fluent/fluent-operator/blob/master/docs/plugins/fluentbit/output/loki.md
+    # See https://docs.fluentbit.io/manual/pipeline/outputs/loki
+    loki:
+      # Switch for generation of fluentbit loki ClusterOutput (and loki basic auth http user and pass secrets if required)
+      enable: false  # Bool
+      retryLimit: "no_limits"
+      logLevel: "info"
+      host: 127.0.0.1  # String
+      port: 3100  # Int
+      # Either, give http{User,Password},tenantID string values specifying them directly
+      httpUser: myuser
+      httpPassword: mypass
+      tenantID: ""
+      # Or give {http{User,Password},tenantID} as reference to secrets that you have manually installed into your kubernetes cluster
+      # httpUser:
+      #   valueFrom:
+      #     secretKeyRef:
+      #       key: value
+      #       name: husersecret
+      #       optional: true
+      # httpPassword:
+      #   valueFrom:
+      #     secretKeyRef:
+      #       key: value
+      #       name: hpasssecret
+      #       optional: true
+      # tenantID:
+      #   valueFrom:
+      #     secretKeyRef:
+      #       key: value
+      #       name: tenantsecret
+      #       optional: true
+      #
+      # To use bearer token auth instead of http basic auth
+      # bearerToken: ey....
+      # or with existing secret
+      # bearerToken:
+      #   valueFrom:
+      #     secretKeyRef:
+      #       key: value
+      #       name: bearerTokenSecret
+      #       optional: true
+      # labels: []      # String list of <name>=<value>
+      # labelKeys: []   # String list of <key>
+      # removeKeys: []  # String list of <key>
+      # labelMapPath: '' # String, path to file, ex /here/it/is
+      # dropSingleKey: off
+      # lineFormat: '' # String
+      # autoKubernetesLabels: on
+      # tenantIDKey:   # String
+      # tls: {}        # *plugins.TLS fluentbit docs
+    stackdriver: {}
+    # You can configure the stackdriver configuration here
+
+  service:
+    storage: {}
+  # Remove the above storage section and uncomment below section if you want to configure file-system as storage for buffer
+  #    storage:
+  #      path: "/host/fluent-bit-buffer/"
+  #      backlogMemLimit: "50MB"
+  #      checksum: "off"
+  #      deleteIrrecoverableChunks: "on"
+  #      maxChunksUp: 128
+  #      metrics: "on"
+  #      sync: normal
+
+  # Configure the default filters in FluentBit.
+  # The `filter` will filter and parse the collected log information and output the logs into a uniform format. You can choose whether to turn this on or not.
+  filter:
+    multiline:
+      enable: false
+      keyContent: log
+      buffer: false
+      # emitterMemBufLimit 120 (MB)
+      emitterMemBufLimit: 120
+      emitterType: memory
+      flushMs: 2000
+      # Optional: mode can be either "parser" or "partial_message"
+      # mode: parser
+      # Optional: Name for the emitter input instance which re-emits the completed records at the beginning of the pipeline.
+      # emitterName: my-emitter
+      parsers:
+        - go
+        - python
+        - java
+        #  use custom multiline parser need set .Values.parsers.javaMultiline.enable = true
+        # - java-multiline
+    kubernetes:
+      enable: true
+      labels: false
+      annotations: false
+    containerd:
+      # This is customized lua containerd log format converter, you can refer here:
+      # https://github.com/fluent/fluent-operator/blob/master/charts/fluent-operator/templates/fluentbit-clusterfilter-containerd.yaml
+      # https://github.com/fluent/fluent-operator/blob/master/charts/fluent-operator/templates/fluentbit-containerd-config.yaml
+      enable: true
+    systemd:
+      enable: true
+
+  kubeedge:
+    enable: false
+    prometheusRemoteWrite:
+      # Change the host to the address of a cloud-side Prometheus-compatible server that can receive Prometheus remote write data
+      host: "<cloud-prometheus-service-host>"
+      # Change the port to the port of a cloud-side Prometheus-compatible server that can receive Prometheus remote write data
+      port: "<cloud-prometheus-service-port>"
+
+  # removes the hostPath mounts for varlibcontainers, varlogs and systemd.
+  disableLogVolumes: false
+
+  parsers:
+    javaMultiline:
+      # use in filter for parser generic springboot multiline log format
+      enable: false
+  # Using namespaceClusterFbCfg, deploy fluent-bit configmap and secret in this namespace.
+  # If it is not defined, it is in the namespace of the fluent-operator.
+  namespaceClusterFbCfg: ""
+
+fluentd:
+  # Installs a sub chart carrying the CRDs for the fluentd controller. The sub chart is enabled by default.
+  # Valid modes include "collector" and "agent".
+  crdsEnable: true
+  enable: false
+  name: fluentd
+  # Valid modes include "collector" and "agent".
+  # The "collector" mode will deploy Fluentd as a StatefulSet as before.
+  # The new "agent" mode will deploy Fluentd as a DaemonSet.
+  mode: "collector"
+  port: 24224
+  image:
+    registry: ghcr.io
+    repository: fluent/fluent-operator/fluentd
+    tag: v1.19.0
+
+  replicas: 1
+  forward:
+    port: 24224
+  watchedNamespaces:
+    - kube-system
+    - default
+    - platform
+    - services
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  schedulerName: ""
+  envVars: []
+  podSecurityContext: {}
+  securityContext: {}
+  imagePullSecrets: []
+  logLevel: ""
+  priorityClassName: ""
+  extras: {}
+  output:
+    es:
+      enable: false
+      host: elasticsearch-logging-data.kubesphere-logging-system.svc
+      port: 9200
+      logstashPrefix: ks-logstash-log
+      buffer:
+        enable: false
+        type: file
+        path: /buffers/es
+    kafka:
+      enable: false
+      brokers: "my-cluster-kafka-bootstrap.default.svc:9091,my-cluster-kafka-bootstrap.default.svc:9092,my-cluster-kafka-bootstrap.default.svc:9093"
+      topicKey: kubernetes_ns
+      buffer:
+        enable: false
+        type: file
+        path: /buffers/kafka
+    opensearch: {}
