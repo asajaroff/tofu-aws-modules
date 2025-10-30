@@ -1,5 +1,4 @@
-
-# Install nginx-ingress controller using Helm
+# Install Gitea using Helm
 resource "helm_release" "gitea" {
   name       = "gitea"
   repository = "https://dl.gitea.com/charts/"
@@ -9,24 +8,48 @@ resource "helm_release" "gitea" {
 
   create_namespace = true
 
+  # values = [file("${path.module}/config/gitea.yaml")]
+
   values = [ <<EOV
 gitea:
   config:
     APP_NAME: "Gitea - sources for development.ar"
+    database:
+      DB_TYPE: postgres
     repository:
       ROOT: "~/gitea-repositories"
     repository.pull-request:
       WORK_IN_PROGRESS_PREFIXES: "WIP:,[WIP]:"
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
 
   admin:
     username: "galera"
     password: "AReallyAwesomeGiteaPassword"
     email: "galera@pm.me"
 
+# Disable HA dependencies
+valkey-cluster:
+  enabled: false
+postgresql-ha:
+  enabled: false
+
+# Enable single-instance dependencies
+valkey:
+  enabled: true
+postgresql:
+  enabled: true
+
+# Configure persistence
+persistence:
+  enabled: true
+  size: 10Gi
+
 ingress:
   enabled: true
+  className: nginx
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-staging
   hosts:
     - host: git.development.ar

@@ -15,7 +15,7 @@ resource "kubernetes_secret" "certmanager_aws_credentials" {
 }
 
 resource "helm_release" "cert-manager" {
-  name        = "tofu"
+  name        = "cert-manager"
   namespace   = "cert-manager"
   chart = "oci://quay.io/jetstack/charts/cert-manager"
   version     = "v1.19.1"
@@ -113,7 +113,7 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer_prod" {
         server = var.letsencrypt_server_prod
         email  = var.letsencrypt_email
         privateKeySecretRef = {
-          name = "letsencrypt-account-key"
+          name = "letsencrypt-prod-account-key"
         }
         solvers = [
           {
@@ -154,7 +154,7 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer_staging" {
         server = var.letsencrypt_server_staging
         email  = var.letsencrypt_email
         privateKeySecretRef = {
-          name = "letsencrypt-account-key"
+          name = "letsencrypt-staging-account-key"
         }
         solvers = [
           {

@@ -1,8 +1,6 @@
 resource "helm_release" "argocd" {
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  version    = "9.0.5"
-
+  chart     = "oci://ghcr.io/argoproj/argo-helm/argo-cd"
+  version   = "9.0.5"
   name      = "argocd"
   namespace = "argocd"
 
@@ -13,29 +11,12 @@ resource "helm_release" "argocd" {
     value = "true"
   }
 
-values = [ <<EOV
-global:
-  domain: argocd.development.ar
+  values = [file("${path.module}/config/argocd.yaml")]
 
-certificate:
-  enabled: true
-
-server:
-  extraArgs:
-    - --insecure
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    tls: true
-  ingressGrpc:
-    enabled: false
-
-EOV
-]
-
-  depends_on = [helm_release.cert-manager]
+  depends_on = [
+    digitalocean_kubernetes_cluster.this,
+    helm_release.cert-manager,
+    helm_release.nginx_ingress,
+    data.kubernetes_service.nginx_ingress
+  ]
 }

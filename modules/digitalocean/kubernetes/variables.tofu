@@ -1,4 +1,3 @@
-# variables.tf
 variable "tags" {
   default = {}
   type    = map(string)
@@ -43,7 +42,6 @@ variable "example_app_hostname" {
 
 variable "letsencrypt_email" {
   type        = string
-  default     = "galeira@pm.me"
   description = "Email address for Let's Encrypt ACME registration"
 }
 
@@ -63,4 +61,21 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
   description = "AWS region for Route53"
+}
+
+variable "gitea_admin_username" {
+  type        = string
+  default     = "galera"
+  description = "Gitea admin username"
+}
+
+variable "gitea_admin_password" {
+  type        = string
+  sensitive   = true
+  description = "Gitea admin password"
+}
+
+variable "gitea_admin_email" {
+  type        = string
+  description = "Gitea admin email address"
 }
