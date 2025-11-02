@@ -15,10 +15,10 @@ resource "kubernetes_secret" "certmanager_aws_credentials" {
 }
 
 resource "helm_release" "cert-manager" {
-  name        = "cert-manager"
-  namespace   = "cert-manager"
-  chart = "oci://quay.io/jetstack/charts/cert-manager"
-  version     = "v1.19.1"
+  name      = "cert-manager"
+  namespace = "cert-manager"
+  chart     = "oci://quay.io/jetstack/charts/cert-manager"
+  version   = "v1.19.1"
 
   create_namespace = true
 
@@ -28,7 +28,7 @@ resource "helm_release" "cert-manager" {
   }
 
 
-  values = [ <<EOV
+  values = [<<EOV
 
 config: {}
 dns01RecursiveNameservers: ""
@@ -67,11 +67,11 @@ data "aws_iam_policy_document" "certmanager" {
     resources = [
       "arn:aws:route53:::hostedzone/${var.hosted_zone}",
     ]
-   condition {
-     test     = "ForAllValues:StringEquals"
-     variable = "route53:ChangeResourceRecordSetsRecordTypes"
-     values   = ["TXT"]
-   }
+    condition {
+      test     = "ForAllValues:StringEquals"
+      variable = "route53:ChangeResourceRecordSetsRecordTypes"
+      values   = ["TXT"]
+    }
 
   }
 

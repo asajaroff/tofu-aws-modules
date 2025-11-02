@@ -3,8 +3,8 @@ data "digitalocean_kubernetes_versions" "this" {
 }
 
 resource "digitalocean_kubernetes_cluster" "this" {
-  name   = var.name
-  region = var.region
+  name    = var.name
+  region  = var.region
   version = data.digitalocean_kubernetes_versions.this.latest_version
 
   maintenance_policy {
@@ -12,11 +12,11 @@ resource "digitalocean_kubernetes_cluster" "this" {
     day        = "sunday"
   }
 
-# Query size names from the DO api
-# curl -X GET \
-#  -H "Content-Type: application/json" \
-#  -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
-#  "https://api.digitalocean.com/v2/sizes" | jq
+  # Query size names from the DO api
+  # curl -X GET \
+  #  -H "Content-Type: application/json" \
+  #  -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
+  #  "https://api.digitalocean.com/v2/sizes" | jq
 
   node_pool {
     name       = "s-1vcpu-2gb"
@@ -37,19 +37,19 @@ resource "digitalocean_kubernetes_node_pool" "platform" {
   min_nodes  = 0
   max_nodes  = 2
 
-  tags       = ["some-tag"]
+  tags = ["some-tag"]
 
-#  labels = {
-#    service  = "backend"
-#    role     = "platform"
-#    priority = "high"
-#  }
-#
-#  taint {
-#    key    = "workloadKind"
-#    value  = "database"
-#    effect = "NoSchedule"
-#  }
+  #  labels = {
+  #    service  = "backend"
+  #    role     = "platform"
+  #    priority = "high"
+  #  }
+  #
+  #  taint {
+  #    key    = "workloadKind"
+  #    value  = "database"
+  #    effect = "NoSchedule"
+  #  }
 }
 
 resource "digitalocean_kubernetes_node_pool" "servers" {
@@ -59,9 +59,9 @@ resource "digitalocean_kubernetes_node_pool" "servers" {
   auto_scale = true
   min_nodes  = 0
   max_nodes  = 2
-    taint {
-      key    = "role"
-      value  = "server"
-      effect = "NoSchedule"
-    }
+  taint {
+    key    = "role"
+    value  = "server"
+    effect = "NoSchedule"
+  }
 }

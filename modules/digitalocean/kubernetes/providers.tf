@@ -40,6 +40,6 @@ provider "kubernetes" {
   host  = try(digitalocean_kubernetes_cluster.this.endpoint, "https://localhost")
   token = try(digitalocean_kubernetes_cluster.this.kube_config[0].token, "")
   cluster_ca_certificate = try(base64decode(
-      digitalocean_kubernetes_cluster.this.kube_config[0].cluster_ca_certificate
-    ), "")
+    digitalocean_kubernetes_cluster.this.kube_config[0].cluster_ca_certificate
+  ), "")
 }
