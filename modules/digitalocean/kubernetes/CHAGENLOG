@@ -5,3 +5,38 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+
+## [1.0.0] - 2025-10-30
+
+### Added
+- Initial Kubernetes cluster deployment module for DigitalOcean
+- Helm chart deployments for core infrastructure:
+  - cert-manager for TLS certificate management
+  - nginx-ingress-controller for ingress management
+  - ArgoCD for GitOps continuous deployment
+  - kube-prometheus-stack for monitoring
+  - fluent-operator for logging
+  - Loki for log aggregation
+  - Thanos for Prometheus long-term storage
+- Gitea Helm configuration for Git repository hosting
+- Documentation directory with setup guides and sample configurations
+- ArgoCD project templates and repository configurations
+- Makefile with targeted provisioning steps and proper wait times
+- Configuration files structure in `config/` directory
+- TLS/Let's Encrypt integration working with nginx ingress
+- DNS configuration support
+- Comprehensive .gitignore for Terraform/OpenTofu and sensitive files
+
+### Changed
+- Reorganized Helm configurations (moved gitea, minio, openbao to docs/)
+- Simplified ArgoCD values configuration (reduced from 4100 to 47 lines)
+- Improved Makefile provisioning with sequential init steps
+- Updated cert-manager and ArgoCD Helm configurations for better compatibility
+- Cleaned up and split nginx configuration
+- Renamed configuration files to use `.tf` extension for consistency
+
+### Fixed
+- TLS certificate generation and renewal with Let's Encrypt
+- ArgoCD deployment stability
+- Nginx ingress controller configuration
+- Provisioning workflow sequencing
