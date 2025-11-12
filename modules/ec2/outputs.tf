@@ -13,6 +13,6 @@ output "instance_info" {
 
 output "private_key" {
   description = "The auto-generated SSH private key in OpenSSH format for connecting to instances (sensitive)"
-  value       = tls_private_key.this[0].private_key_openssh
+  value       = var.create_key ? tls_private_key.this[0].private_key_openssh : null
   sensitive   = true
 }

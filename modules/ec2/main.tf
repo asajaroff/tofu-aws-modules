@@ -3,7 +3,7 @@ resource "aws_instance" "this" {
   for_each                    = { for instance in var.instances_map : instance.name => instance }
   instance_type               = each.value.instance_type
   ami                         = local.selected_ami
-  key_name                    = var.create_key == true ? aws_key_pair.this.key_name : ""
+  key_name                    = var.create_key == true ? aws_key_pair.this[0].key_name : ""
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
   user_data                   = data.cloudinit_config.debian.rendered
@@ -24,7 +24,7 @@ resource "aws_instance" "this" {
       market_type = "spot"
       spot_options {
         max_price                      = 0.005
-        instance_interruption_behavior = stop
+        instance_interruption_behavior = "stop"
       }
     }
   }
