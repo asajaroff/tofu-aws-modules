@@ -1,0 +1,14 @@
+#cloud-config
+# Flatcar Container Linux cloud-init configuration
+# Note: Flatcar primarily uses Ignition, but basic cloud-init is supported
+# Default user is "core" on Flatcar Container Linux
+# See: https://www.flatcar.org/docs/latest/
+
+# Add SSH keys for the core user
+ssh_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPuncxx/IaHlLSWNCCk+zwQTzghi89V/xLhvsibFZUk Macbook Air M2
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJK13sr8/gqTfw9x3hY3fxFXOun5MWmyqZ/uN5E0Q4lG asajaroff@een.com
+
+# Flatcar is container-optimized, so most tools should be run in containers
+# For more advanced configuration, consider using Ignition/Butane configs
+# https://www.flatcar.org/docs/latest/provisioning/config-transpiler/

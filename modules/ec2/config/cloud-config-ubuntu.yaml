@@ -1,0 +1,29 @@
+#cloud-config
+# See documentation for more configuration examples
+# https://cloudinit.readthedocs.io/en/latest/reference/examples.html
+
+# Updates
+package_update: true
+
+# add each entry to ~/.ssh/authorized_keys for the configured user or the
+# first user defined in the user definition directive.
+ssh_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPuncxx/IaHlLSWNCCk+zwQTzghi89V/xLhvsibFZUk Macbook Air M2
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJK13sr8/gqTfw9x3hY3fxFXOun5MWmyqZ/uN5E0Q4lG asajaroff@een.com
+
+# Install arbitrary packages
+# https://cloudinit.readthedocs.io/en/latest/reference/examples.html#install-arbitrary-packages
+packages:
+  - ansible
+  - git
+  - python3
+  - neovim
+  - netcat-openbsd
+  - telnet
+  - net-tools
+  - curl
+
+# Run commands on first boot
+# https://cloudinit.readthedocs.io/en/latest/reference/examples.html#run-commands-on-first-boot
+runcmd:
+ - ls -l /root

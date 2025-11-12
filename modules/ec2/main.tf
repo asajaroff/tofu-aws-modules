@@ -6,7 +6,7 @@ resource "aws_instance" "this" {
   key_name                    = var.create_key == true ? aws_key_pair.this[0].key_name : ""
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
-  user_data                   = data.cloudinit_config.debian.rendered
+  user_data                   = local.selected_cloudinit
   iam_instance_profile        = aws_iam_instance_profile.this.name
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
 
@@ -23,7 +23,7 @@ resource "aws_instance" "this" {
     content {
       market_type = "spot"
       spot_options {
-        max_price                      = 0.005
+        max_price                      = var.spot_price
         instance_interruption_behavior = "stop"
       }
     }
