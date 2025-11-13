@@ -2,10 +2,10 @@
 locals {
   ebs_volumes = {
     for pair in flatten([
-      for instance_key, instance in var.instances : [
+      for instance in var.instances : [
         for vol_idx, vol in var.additional_ebs_volumes : {
-          key                   = "${instance_key}-vol${vol_idx}"
-          instance_key          = instance_key
+          key                   = "${instance.name}-vol${vol_idx}"
+          instance_key          = instance.name
           vol_idx               = vol_idx
           volume_size           = vol.volume_size
           volume_type           = vol.volume_type
