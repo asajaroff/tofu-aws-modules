@@ -238,3 +238,56 @@ Notes:
 - Volumes are created per instance (if you have 3 instances, 3 volumes are created)
 EOT
 }
+
+variable "enable_ipv6" {
+  type        = bool
+  default     = false
+  description = <<EOT
+Enable IPv6 address assignment for EC2 instances.
+When enabled, each instance will be assigned an IPv6 address.
+
+IMPORTANT: For IPv6 to work properly, your VPC must have:
+1. An IPv6 CIDR block assigned to the VPC
+2. An IPv6 CIDR block assigned to the subnet
+3. An Internet Gateway (IGW) or Egress-Only Internet Gateway attached
+4. Route table with IPv6 routes (::/0 -> IGW or Egress-Only IGW)
+
+If IPv6 is enabled but routing is not properly configured, you may experience:
+- NAT64 synthetic addresses (64:ff9b::/96) that don't work
+- DNS timeouts when trying to reach external services
+- SSH/Git operations failing after 30-60 second timeouts
+
+Recommended: Set to false unless you have confirmed IPv6 routing is working.
+EOT
+}
+
+variable "ipv6_address_count" {
+  type        = number
+  default     = 1
+  description = <<EOT
+Number of IPv6 addresses to assign to each instance.
+Only used when enable_ipv6 is true.
+Typical values: 1 (for a single IPv6 address per instance)
+EOT
+}
+
+variable "enable_ipv6_security_rules" {
+  type        = bool
+  default     = false
+  description = <<EOT
+Enable IPv6 security group rules for ingress/egress traffic.
+When enabled, allows:
+- IPv6 SSH access (if allow_ssh_ipv6_ips is configured)
+- IPv6 high ports (10000-65535) for return traffic and applications
+- IPv6 egress to ::/0 (all outbound traffic)
+
+Blocks all incoming IPv6 traffic on ports below 10000 (except SSH if configured).
+
+Set to false if you want to use IPv4-only communication or if your VPC doesn't have proper IPv6 routing.
+EOT
+
+  validation {
+    condition     = !var.enable_ipv6 || var.enable_ipv6_security_rules
+    error_message = "When enable_ipv6 is true, enable_ipv6_security_rules must also be true to allow IPv6 traffic through the security group."
+  }
+}

@@ -23,7 +23,7 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_ipv4" {
 
 # SSH access from IPv6 addresses
 resource "aws_vpc_security_group_ingress_rule" "ssh_ipv6" {
-  for_each = toset(var.allow_ssh_ipv6_ips)
+  for_each = var.enable_ipv6_security_rules ? toset(var.allow_ssh_ipv6_ips) : []
 
   security_group_id = aws_security_group.instance.id
   cidr_ipv6         = each.value
@@ -32,19 +32,23 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_ipv6" {
   to_port           = 22
 }
 
-# Allow high ports for IPv6 - typically used for return traffic and application ports
+# Allow high ports for IPv6 - ports 10000+ for return traffic and application ports
 resource "aws_vpc_security_group_ingress_rule" "high_ports_tcp_ipv6" {
+  count = var.enable_ipv6_security_rules ? 1 : 0
+
   security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
-  from_port         = 1024
+  from_port         = 10000
   ip_protocol       = "tcp"
   to_port           = 65535
 }
 
 resource "aws_vpc_security_group_ingress_rule" "high_ports_udp_ipv6" {
+  count = var.enable_ipv6_security_rules ? 1 : 0
+
   security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
-  from_port         = 1024
+  from_port         = 10000
   ip_protocol       = "udp"
   to_port           = 65535
 }
@@ -57,6 +61,8 @@ resource "aws_vpc_security_group_egress_rule" "all_ipv4" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "all_ipv6" {
+  count = var.enable_ipv6_security_rules ? 1 : 0
+
   security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
   ip_protocol       = "-1"

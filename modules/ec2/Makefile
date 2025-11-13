@@ -62,3 +62,14 @@ tflock: ## Generates the lockfile
   -platform=linux_amd64 \
   -platform=linux_arm64
 
+.PHONY: release
+release: ## Create and push a release tag (usage: make release VERSION=X.X.X)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required. Usage: make release VERSION=X.X.X"; \
+		exit 1; \
+	fi
+	@echo "Creating release tag ec2/v$(VERSION)..."
+	git tag -a ec2/v$(VERSION) -m "Release ec2/v$(VERSION)"
+	git push origin ec2/v$(VERSION)
+	@echo "Release ec2/v$(VERSION) created and pushed successfully!"
+

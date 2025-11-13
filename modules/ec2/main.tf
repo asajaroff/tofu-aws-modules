@@ -6,8 +6,8 @@ resource "aws_instance" "this" {
   key_name                    = var.create_ssh_key ? aws_key_pair.this[0].key_name : null
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
-  ipv6_address_count          = 1
-  user_data              = local.selected_cloudinit
+  ipv6_address_count          = var.enable_ipv6 ? var.ipv6_address_count : 0
+  user_data                   = local.selected_cloudinit
   iam_instance_profile   = aws_iam_instance_profile.this.name
   vpc_security_group_ids = concat(
     [aws_security_group.instance.id],

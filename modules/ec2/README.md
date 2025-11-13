@@ -34,6 +34,7 @@ A flexible Terraform/OpenTofu module for provisioning EC2 instances with customi
 - **Cloud-init Configuration**: Automated instance initialization and software installation
 - **Security Group Management**: Preconfigured security groups with customizable SSH access
 - **Multi-Instance Deployment**: Deploy multiple instances with different configurations in a single module call
+- **IPv6 Support**: Optional IPv6 configuration (disabled by default to prevent NAT64 issues)
 
 ## Quick Start
 
@@ -350,6 +351,40 @@ output "ssh_key" {
 - Enhanced security posture
 
 **Note**: Private instances can still access the internet through NAT Gateway for package updates, git cloning, etc.
+
+### IPv6 Configuration
+
+**Default**: IPv6 is **disabled** by default to prevent connectivity issues.
+
+**Common Issue**: When IPv6 is enabled without proper VPC configuration, you may experience:
+- NAT64 synthetic addresses (64:ff9b::/96) that don't work
+- Git/SSH operations timing out after 30-60 seconds
+- DNS returning non-functional IPv6 addresses
+
+**To enable IPv6**, you must:
+1. Ensure your VPC has IPv6 CIDR blocks configured
+2. Configure Internet Gateway or Egress-Only Internet Gateway
+3. Set up proper IPv6 routes in your route table
+4. Enable IPv6 in the module:
+
+```hcl
+module "ec2_instances" {
+  source = "./modules/ec2"
+
+  enable_ipv6                = true
+  enable_ipv6_security_rules = true  # Allows outbound traffic, blocks inbound ports < 10000
+  ipv6_address_count         = 1
+
+  # Optional: Allow IPv6 SSH access
+  allow_ssh_ipv6_ips = ["2001:db8::/32"]
+
+  # ... other configuration ...
+}
+```
+
+**Security**: IPv6 rules allow all outbound traffic and incoming traffic only on ports 10000-65535.
+
+📖 **See [IPv6-CONFIGURATION.md](./IPv6-CONFIGURATION.md) for detailed setup instructions and troubleshooting.**
 
 ## Security Configuration
 
