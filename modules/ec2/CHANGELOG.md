@@ -26,6 +26,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `key_pair_name` - Name of the SSH key pair (or null)
   - `ami_id` - ID of the selected AMI
   - `instance_arns` - Map of instance ARNs
+- Added `allow_ssh_ipv6_ips` variable for IPv6 SSH access control with default empty list (no IPv6 SSH by default)
+- Added IPv6 SSH security group rules that iterate over custom addresses (consistent with IPv4 pattern)
+- Added `disable_api_termination` implementation to EC2 instances (was defined in variables but not applied)
+- Added tags to IAM role, IAM instance profile, SSH key pair, and security group for better resource management
+- Added map-based AMI selection logic for cleaner code (`ami_map` in data.tf)
+- Added map-based cloudinit selection logic for cleaner code (`cloudinit_map` in cloudinit.tf)
+
+### Changed - BREAKING
+- **BREAKING**: Renamed `pool_name` variable to `name` for clearer purpose and simpler naming
+- **BREAKING**: Renamed `instances_map` variable to `instances` (it was always a list, not a map)
+- **BREAKING**: Renamed `create_key` variable to `create_ssh_key` for consistency and clarity
+- **BREAKING**: Renamed `aws_ssm_enabled` variable to `enable_ssm` for consistent naming pattern
+- **BREAKING**: Renamed `key_name` variable to `ssh_key_name` for specificity
+- **BREAKING**: Removed unused `associate_public_ip_address` variable (functionality already available via `instances[].public`)
+- **BREAKING**: Changed IPv6 SSH access from open `::/0` to custom list via `allow_ssh_ipv6_ips` (secure by default)
+- **BREAKING**: Renamed `key_pair_name` output to `ssh_key_name` for consistency
+- **BREAKING**: Renamed security group resource from `allow_ssh` to `instance` (reflects broader purpose)
+
+### Changed - Non-Breaking
+- Changed security group naming to use `pool_name` for uniqueness and multi-module deployment support
+- Changed `allow_ssh_ip` (string) to `allow_ssh_ips` (list) to support multiple IP addresses
+- Removed unused `local-exec` provisioner with `dig` command from security group
+- Standardized all resource naming to use hyphens consistently
+- Improved security group resource naming:
+  - `allow_ssh_ipv4` → `ssh_ipv4`
+  - `allow_ssh_ipv6` → `ssh_ipv6`
+  - `allow_high_ports_ipv6` → `high_ports_tcp_ipv6`
+  - `allow_high_ports_udp_ipv6` → `high_ports_udp_ipv6`
+  - `allow_all_traffic_ipv4` → `all_ipv4`
+  - `allow_all_traffic_ipv6` → `all_ipv6`
+- Improved security group description from "Allow SSH inbound traffic..." to "Security group for EC2 instances"
+- Improved security group naming from `${var.name}-ssh-ingress` to `${var.name}-sg`
+- Improved IAM resource naming:
+  - Instance profile: `${var.name}-iam-instance-profile` → `${var.name}-instance-profile`
+  - Policy attachment: `custom` → `ssm` (clearer purpose)
+- Simplified AMI selection logic from nested ternaries to map lookup for better readability
+- Simplified cloudinit selection logic from nested ternaries to map lookup for better readability
+- Improved comments in iam.tf for clarity (e.g., "Attach SSM policy to role for Session Manager access")
+- Standardized boolean checks (removed redundant `== true` comparisons)
+- Changed empty string returns to `null` for optional values (e.g., `key_name` when SSH key not created)
+- Updated main.tf tags format from single-line to multi-line for better readability
+- Improved default value for `ssh_key_name` from verbose string to concise "terraform-ec2-module-key"
 
 ### Fixed
 - Fixed key pair conditional creation - now properly respects `create_key` variable
@@ -39,12 +81,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed security group tag naming - standardized to use hyphens `${var.pool_name}-ssh`
 - Fixed variable types - `spot_enabled` and `aws_ssm_enabled` changed from `string` to `bool`
 - Fixed `key_name` variable description to clarify it's the SSH key pair name
+- Fixed `disable_api_termination` - now actually applied to instances (was only defined in variables)
+- Fixed inconsistent output descriptions to reference new variable names
 
-### Changed
-- Changed security group naming to use `pool_name` for uniqueness and multi-module deployment support
-- Changed `allow_ssh_ip` (string) to `allow_ssh_ips` (list) to support multiple IP addresses
-- Removed unused `local-exec` provisioner with `dig` command from security group
-- Standardized all resource naming to use hyphens consistently
+### Improved
+- Improved README.md documentation with all new variable names and examples
+- Improved variable descriptions for clarity and consistency
+- Improved output descriptions for accuracy
+- Updated all examples in `examples/custom-cloud-init/` with new variable names
+- Updated architecture diagrams to reflect new naming conventions
+- Improved code organization and readability throughout module
+- Improved custom cloud-config documentation for consistency
+
+### Security
+- **SECURITY**: Changed default IPv6 SSH behavior from open (`::/0`) to closed (empty list) - must explicitly allow IPv6 addresses
+- **SECURITY**: IPv6 SSH now requires explicit address whitelisting via `allow_ssh_ipv6_ips` variable
 
 ### Verified
 - Verified Debian 13 (Trixie) AMI availability and naming pattern compatibility

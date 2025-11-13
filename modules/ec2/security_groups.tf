@@ -1,59 +1,65 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
-resource "aws_security_group" "allow_ssh" {
-  name        = "${var.pool_name}-ssh-ingress"
-  description = "Allow SSH inbound traffic and all outbound traffic"
+resource "aws_security_group" "instance" {
+  name        = "${var.name}-sg"
+  description = "Security group for EC2 instances"
   vpc_id      = data.aws_vpc.selected.id
 
-  tags = {
-    Name = "${var.pool_name}-ssh"
-  }
+  tags = merge(
+    { Name = "${var.name}-sg" },
+    var.tags
+  )
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
+# SSH access from IPv4 addresses
+resource "aws_vpc_security_group_ingress_rule" "ssh_ipv4" {
   for_each = toset(var.allow_ssh_ips)
 
-  security_group_id = aws_security_group.allow_ssh.id
+  security_group_id = aws_security_group.instance.id
   cidr_ipv4         = each.value
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv6" {
-  security_group_id = aws_security_group.allow_ssh.id
-  cidr_ipv6         = "::/0"
+# SSH access from IPv6 addresses
+resource "aws_vpc_security_group_ingress_rule" "ssh_ipv6" {
+  for_each = toset(var.allow_ssh_ipv6_ips)
+
+  security_group_id = aws_security_group.instance.id
+  cidr_ipv6         = each.value
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22
 }
 
-# Allow high ports (1024-65535) for IPv6 - typically used for return traffic and application ports
-resource "aws_vpc_security_group_ingress_rule" "allow_high_ports_ipv6" {
-  security_group_id = aws_security_group.allow_ssh.id
+# Allow high ports for IPv6 - typically used for return traffic and application ports
+resource "aws_vpc_security_group_ingress_rule" "high_ports_tcp_ipv6" {
+  security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
   from_port         = 1024
   ip_protocol       = "tcp"
   to_port           = 65535
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_high_ports_udp_ipv6" {
-  security_group_id = aws_security_group.allow_ssh.id
+resource "aws_vpc_security_group_ingress_rule" "high_ports_udp_ipv6" {
+  security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
   from_port         = 1024
   ip_protocol       = "udp"
   to_port           = 65535
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  security_group_id = aws_security_group.allow_ssh.id
+# Allow all outbound traffic
+resource "aws_vpc_security_group_egress_rule" "all_ipv4" {
+  security_group_id = aws_security_group.instance.id
   cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
+  ip_protocol       = "-1"
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
-  security_group_id = aws_security_group.allow_ssh.id
+resource "aws_vpc_security_group_egress_rule" "all_ipv6" {
+  security_group_id = aws_security_group.instance.id
   cidr_ipv6         = "::/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
+  ip_protocol       = "-1"
 }
 
 

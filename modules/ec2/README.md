@@ -44,13 +44,13 @@ cat > main.tf <<'EOF'
 module "ec2" {
   source = "./modules/ec2"
 
-  pool_name = "my-pool"
+  name      = "my-instances"
   vpc_id    = "vpc-xxxxx"      # Replace with your VPC ID
   subnet_id = "subnet-xxxxx"   # Replace with your subnet ID
 
   allow_ssh_ips = ["YOUR_IP/32"]  # Replace with your IP
 
-  instances_map = [{
+  instances = [{
     name                    = "test.example.com"
     instance_type           = "t3.micro"
     disable_api_termination = false
@@ -92,11 +92,11 @@ ssh -i key.pem admin@$(terraform output -raw instance_ip)
 module "ec2_instances" {
   source = "./modules/ec2"
 
-  pool_name = "my-app-pool"
+  name      = "my-app"
   vpc_id    = "vpc-12345678"
   subnet_id = "subnet-87654321"
 
-  instances_map = [
+  instances = [
     {
       name                    = "web-server.example.com"
       instance_type           = "t3.micro"
@@ -118,14 +118,14 @@ The module supports multiple operating systems and architectures.
 module "ubuntu_instance" {
   source = "./modules/ec2"
 
-  pool_name = "ubuntu-pool"
+  name = "ubuntu-pool"
   vpc_id    = "vpc-12345678"
   subnet_id = "subnet-87654321"
 
   os_family = "ubuntu"
   os_arch   = "amd64"
 
-  instances_map = [
+  instances = [
     {
       name                    = "ubuntu.example.com"
       instance_type           = "t3.micro"
@@ -143,14 +143,14 @@ module "ubuntu_instance" {
 module "flatcar_instance" {
   source = "./modules/ec2"
 
-  pool_name = "flatcar-pool"
+  name = "flatcar-pool"
   vpc_id    = "vpc-12345678"
   subnet_id = "subnet-87654321"
 
   os_family = "flatcar"
   os_arch   = "amd64"  # or "arm64"
 
-  instances_map = [
+  instances = [
     {
       name                    = "flatcar.example.com"
       instance_type           = "t3.micro"
@@ -168,14 +168,14 @@ module "flatcar_instance" {
 module "freebsd_arm" {
   source = "./modules/ec2"
 
-  pool_name = "freebsd-pool"
+  name = "freebsd-pool"
   vpc_id    = "vpc-12345678"
   subnet_id = "subnet-87654321"
 
   os_family = "freebsd"
   os_arch   = "arm64"
 
-  instances_map = [
+  instances = [
     {
       name                    = "freebsd.example.com"
       instance_type           = "t4g.micro"  # Graviton2
@@ -193,11 +193,11 @@ module "freebsd_arm" {
 module "ec2_instances" {
   source = "./modules/ec2"
 
-  pool_name = "multi-tier-app"
+  name = "multi-tier-app"
   vpc_id    = "vpc-12345678"
   subnet_id = "subnet-87654321"
 
-  instances_map = [
+  instances = [
     {
       name                    = "web.example.com"
       instance_type           = "t3.micro"
@@ -237,7 +237,7 @@ module "ec2_spot" {
   spot_enabled  = true
   spot_price    = 0.01
 
-  instances_map = [
+  instances = [
     {
       name                    = "batch-worker.example.com"
       instance_type           = "t3.medium"
@@ -272,7 +272,7 @@ module "vpc" {
 module "app_servers" {
   source = "./modules/ec2"
 
-  pool_name = "production-app"
+  name = "production-app"
   vpc_id    = module.vpc.vpc_id
   subnet_id = module.vpc.private_subnets[0]  # Private subnet with NAT
 
@@ -281,9 +281,9 @@ module "app_servers" {
   region    = "us-east-1"
 
   allow_ssh_ips   = ["203.0.113.0/32"]  # Your office IP
-  aws_ssm_enabled = true
+  enable_ssm =true
 
-  instances_map = [
+  instances = [
     {
       name                    = "app-01.prod.example.com"
       instance_type           = "t3.medium"
@@ -396,7 +396,7 @@ allow_ssh_ips = ["${chomp(data.http.myip.response_body)}/32"]
 ### Security Recommendations
 
 1. **Restrict SSH Access**: Always specify `allow_ssh_ips` - don't rely on defaults
-2. **Use SSM When Possible**: Enable `aws_ssm_enabled` and use Session Manager instead of SSH
+2. **Use SSM When Possible**: Enable `enable_ssm` and use Session Manager instead of SSH
 3. **Private Subnets for Production**: Use private subnets with NAT for production workloads
 4. **Enable Termination Protection**: Set `disable_api_termination = true` for critical instances
 5. **Regular Updates**: Module uses `most_recent = true` for AMIs, but patch instances regularly
@@ -407,7 +407,7 @@ allow_ssh_ips = ["${chomp(data.http.myip.response_body)}/32"]
 
 ### SSH Access
 
-If `create_key` is enabled (default), the module generates an SSH key pair. Retrieve the private key from the outputs:
+If `create_ssh_key` is enabled (default), the module generates an SSH key pair. Retrieve the private key from the outputs:
 
 ```bash
 terraform output -raw private_key > instance_key.pem
@@ -441,7 +441,7 @@ ssh -i instance_key.pem core@<instance-ip>
 
 ### AWS Session Manager
 
-If `aws_ssm_enabled` is true (default), connect via AWS SSM without SSH keys:
+If `enable_ssm` is true (default), connect via AWS SSM without SSH keys:
 
 ```bash
 # Connect to instance
@@ -632,7 +632,7 @@ ip route show default
 
 **Symptom**: Terraform wants to destroy and recreate instance
 
-**Cause**: Changed the `name` field in `instances_map`
+**Cause**: Changed the `name` field in an instance within the `instances` list
 
 **Why**: Terraform uses `name` as the resource key (see `for_each` in `main.tf`)
 
@@ -692,17 +692,17 @@ aws ec2 describe-images --image-ids <ami-id>
 ### Current Limitations
 
 1. **Instance Name Changes Cause Recreation**
-   - Changing the `name` field in `instances_map` destroys and recreates the instance
+   - Changing the `name` field in `instances` destroys and recreates the instance
    - Terraform limitation due to `for_each` key
    - Workaround: Use tags for changeable metadata
 
 2. **Shared IAM Role**
-   - All instances in a pool share the same IAM role
+   - All instances share the same IAM role
    - Cannot have different permissions per instance
-   - Workaround: Use separate module calls with different `pool_name`
+   - Workaround: Use separate module calls with different `name` values
 
 3. **Single Security Group**
-   - All instances in a pool share one security group
+   - All instances share one security group
    - Cannot have per-instance firewall rules
    - Workaround: Create additional security groups and attach manually
 
@@ -747,7 +747,7 @@ aws ec2 describe-images --image-ids <ami-id>
 │  │         Subnet (subnet_id)                      │   │
 │  │                                                 │   │
 │  │  ┌──────────────────────────────────────────┐  │   │
-│  │  │       EC2 Instance/s (pool_name)         │  │   │
+│  │  │       EC2 Instance/s (name)              │  │   │
 │  │  │                                          │  │   │
 │  │  │  ┌────────────────────────────────┐     │  │   │
 │  │  │  │  Selected AMI (os_family)      │     │  │   │
@@ -776,7 +776,7 @@ aws ec2 describe-images --image-ids <ami-id>
                          │
                          ▼
                   AWS Services
-                  - SSM (Session Manager) ◄── aws_ssm_enabled
+                  - SSM (Session Manager) ◄── enable_ssm
                   - EC2 API
                   - CloudWatch Logs
 ```
@@ -784,21 +784,21 @@ aws ec2 describe-images --image-ids <ami-id>
 ### Component Overview
 
 - **VPC/Subnet**: Provided by user, must have appropriate routing
-- **EC2 Instances**: Created with `for_each` loop based on `instances_map`
-- **Security Group**: Shared across all instances in pool, SSH ingress + all egress
-- **IAM Role**: Shared role with SSM policy (if enabled)
+- **EC2 Instances**: Created with `for_each` loop based on `instances`
+- **Security Group**: Shared across all instances, SSH ingress + all egress
+- **IAM Role**: Shared role with SSM policy (if `enable_ssm` is true)
 - **AMI Selection**: Automatic based on `os_family` and `os_arch`
 - **Cloud-init**: OS-specific bootstrap on first launch
-- **SSH Key Pair**: Auto-generated (optional) for SSH access
+- **SSH Key Pair**: Auto-generated (optional, controlled by `create_ssh_key`)
 
 ---
 
 ## Important Notes
 
-- **Instance Recreation**: Changing the `name` field in `instances_map` will cause the instance to be destroyed and recreated
+- **Instance Recreation**: Changing the `name` field in `instances` will cause the instance to be destroyed and recreated
 - **Metadata Security**: IMDSv2 is enforced for enhanced security (`http_tokens = "required"`)
 - **Volume Management**: Root volumes are configured with gp3 (General Purpose SSD) and are deleted on instance termination
-- **IAM Roles**: A shared IAM role and instance profile are created for all instances in the pool using the `pool_name` variable
+- **IAM Roles**: A shared IAM role and instance profile are created for all instances using the `name` variable
 - **Spot Instances**: When enabled, instances use the `stop` interruption behavior to preserve data during spot interruptions
 
 ---

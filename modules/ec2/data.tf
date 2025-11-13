@@ -1,5 +1,13 @@
 locals {
-  selected_ami = var.os_family == "debian" ? data.aws_ami.debian.id : (var.os_family == "freebsd" ? data.aws_ami.freebsd.id : (var.os_family == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id))
+  # Map of OS family to AMI ID
+  ami_map = {
+    debian  = data.aws_ami.debian.id
+    ubuntu  = data.aws_ami.ubuntu.id
+    freebsd = data.aws_ami.freebsd.id
+    flatcar = data.aws_ami.flatcar.id
+  }
+
+  selected_ami = local.ami_map[var.os_family]
 }
 
 data "aws_ami" "ubuntu" {

@@ -30,13 +30,13 @@ module "ec2_with_custom_cloudinit" {
   source = "../../"  # Points to modules/ec2
 
   # Basic configuration
-  pool_name = "custom-cloudinit-example"
+  name      = "custom-cloudinit-example"
   region    = var.region
   vpc_id    = var.vpc_id
   subnet_id = var.subnet_id
 
   # Instance configuration
-  instances_map = [
+  instances = [
     {
       name                    = "custom-cloudinit-instance.example.com"
       instance_type           = "t3.micro"
@@ -54,11 +54,11 @@ module "ec2_with_custom_cloudinit" {
   allow_ssh_ips = ["0.0.0.0/0"]  # CHANGE THIS! Use your actual IP for security
 
   # SSH key configuration
-  create_key = true
-  key_name   = "custom-cloudinit-example-key"
+  create_ssh_key = true
+  ssh_key_name   = "custom-cloudinit-example-key"
 
   # AWS SSM (Session Manager) configuration
-  aws_ssm_enabled = true
+  enable_ssm = true
 
   # ========================================================================
   # CUSTOM CLOUD-INIT SCRIPTS
@@ -89,12 +89,12 @@ module "ec2_with_custom_cloudinit" {
 # module "ec2_with_default_cloudinit" {
 #   source = "../../"
 #
-#   pool_name = "default-cloudinit-example"
+#   name      = "default-cloudinit-example"
 #   region    = var.region
 #   vpc_id    = var.vpc_id
 #   subnet_id = var.subnet_id
 #
-#   instances_map = [
+#   instances = [
 #     {
 #       name                    = "default-instance.example.com"
 #       instance_type           = "t3.micro"
@@ -114,23 +114,18 @@ module "ec2_with_custom_cloudinit" {
 # Outputs
 # ============================================================================
 
-output "instance_ids" {
-  description = "IDs of the created EC2 instances"
-  value       = module.ec2_with_custom_cloudinit.instance_ids
+output "instance_info" {
+  description = "Map of instance information including IDs and IP addresses"
+  value       = module.ec2_with_custom_cloudinit.instance_info
 }
 
-output "instance_public_ips" {
-  description = "Public IP addresses of the instances"
-  value       = module.ec2_with_custom_cloudinit.instance_public_ips
-}
-
-output "instance_private_ips" {
-  description = "Private IP addresses of the instances"
-  value       = module.ec2_with_custom_cloudinit.instance_private_ips
-}
-
-output "ssh_private_key" {
+output "private_key" {
   description = "SSH private key for connecting to instances"
-  value       = module.ec2_with_custom_cloudinit.ssh_private_key
+  value       = module.ec2_with_custom_cloudinit.private_key
   sensitive   = true
+}
+
+output "security_group_id" {
+  description = "ID of the security group"
+  value       = module.ec2_with_custom_cloudinit.security_group_id
 }

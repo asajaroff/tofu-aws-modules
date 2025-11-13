@@ -67,5 +67,13 @@ data "cloudinit_config" "flatcar" {
 }
 
 locals {
-  selected_cloudinit = var.os_family == "debian" ? data.cloudinit_config.debian.rendered : (var.os_family == "freebsd" ? data.cloudinit_config.freebsd.rendered : (var.os_family == "flatcar" ? data.cloudinit_config.flatcar.rendered : data.cloudinit_config.ubuntu.rendered))
+  # Map of OS family to cloudinit configuration
+  cloudinit_map = {
+    debian  = data.cloudinit_config.debian.rendered
+    ubuntu  = data.cloudinit_config.ubuntu.rendered
+    freebsd = data.cloudinit_config.freebsd.rendered
+    flatcar = data.cloudinit_config.flatcar.rendered
+  }
+
+  selected_cloudinit = local.cloudinit_map[var.os_family]
 }
