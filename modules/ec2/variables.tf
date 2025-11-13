@@ -285,9 +285,4 @@ Blocks all incoming IPv6 traffic on ports below 10000 (except SSH if configured)
 
 Set to false if you want to use IPv4-only communication or if your VPC doesn't have proper IPv6 routing.
 EOT
-
-  validation {
-    condition     = !var.enable_ipv6 || var.enable_ipv6_security_rules
-    error_message = "When enable_ipv6 is true, enable_ipv6_security_rules must also be true to allow IPv6 traffic through the security group."
-  }
 }
