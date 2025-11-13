@@ -1,0 +1,213 @@
+#cloud-config
+# Custom Cloud-Init Configuration Example for Debian-based EC2 Instances
+#
+# This file demonstrates various cloud-init capabilities.
+# Cloud-init runs after the bootstrap script and handles higher-level configuration.
+#
+# Full documentation: https://cloudinit.readthedocs.io/en/latest/reference/examples.html
+
+# ============================================================================
+# SYSTEM UPDATES
+# ============================================================================
+
+# Automatically update package lists on first boot
+package_update: true
+
+# Automatically upgrade all packages on first boot (optional, can be slow)
+# package_upgrade: true
+
+# Reboot if required after package upgrades (optional)
+# package_reboot_if_required: true
+
+# ============================================================================
+# SSH CONFIGURATION
+# ============================================================================
+
+# Add SSH keys for the default user (admin, ubuntu, debian, etc.)
+# Replace these with your own public keys
+ssh_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPuncxx/IaHlLSWNCCk+zwQTzghi89V/xLhvsibFZUk your-key-name
+  # Add more keys as needed
+  # - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB... another-key
+
+# Disable password authentication (recommended for security)
+ssh_pwauth: false
+
+# ============================================================================
+# PACKAGE INSTALLATION
+# ============================================================================
+
+# Install packages via apt
+packages:
+  # Development tools
+  - git
+  - build-essential
+  - python3
+  - python3-pip
+
+  # System utilities
+  - curl
+  - wget
+  - vim
+  - neovim
+  - htop
+  - tmux
+  - jq
+
+  # Networking tools
+  - netcat-openbsd
+  - net-tools
+  - dnsutils
+  - traceroute
+
+  # Monitoring and debugging
+  - sysstat
+  - strace
+
+  # Configuration management (optional)
+  # - ansible
+
+  # Container tools (optional)
+  # - docker.io
+  # - docker-compose
+
+# ============================================================================
+# FILE CREATION
+# ============================================================================
+
+# Create files on the system
+write_files:
+  # Example: Create a custom motd (message of the day)
+  - path: /etc/motd
+    content: |
+      ================================================
+      Welcome to Your Custom EC2 Instance
+
+      Instance configured via custom cloud-init
+      ================================================
+    permissions: '0644'
+    owner: root:root
+
+  # Example: Create a custom script
+  - path: /usr/local/bin/hello-world.sh
+    content: |
+      #!/bin/bash
+      echo "Hello from custom cloud-init!"
+      echo "Hostname: $(hostname)"
+      echo "IP Address: $(hostname -I)"
+    permissions: '0755'
+    owner: root:root
+
+  # Example: Create a systemd service
+  - path: /etc/systemd/system/custom-app.service
+    content: |
+      [Unit]
+      Description=Custom Application Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/bin/hello-world.sh
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+    permissions: '0644'
+    owner: root:root
+
+# ============================================================================
+# USER MANAGEMENT
+# ============================================================================
+
+# Create additional users (optional)
+# users:
+#   - name: developer
+#     groups: sudo, docker
+#     shell: /bin/bash
+#     sudo: ALL=(ALL) NOPASSWD:ALL
+#     ssh_authorized_keys:
+#       - ssh-ed25519 AAAAC3... developer-key
+
+# ============================================================================
+# HOSTNAME CONFIGURATION
+# ============================================================================
+
+# Set hostname (optional - usually set via EC2 tags)
+# hostname: my-custom-hostname
+# fqdn: my-custom-hostname.example.com
+
+# Preserve existing hostname from EC2 metadata
+preserve_hostname: false
+
+# ============================================================================
+# COMMANDS TO RUN
+# ============================================================================
+
+# Run commands on first boot
+# These run after packages are installed
+runcmd:
+  # Example: Display system information
+  - echo "========================================" >> /var/log/cloud-init-custom.log
+  - echo "Custom cloud-init started at $(date)" >> /var/log/cloud-init-custom.log
+  - echo "Hostname: $(hostname)" >> /var/log/cloud-init-custom.log
+  - echo "IP Address: $(hostname -I)" >> /var/log/cloud-init-custom.log
+  - echo "========================================" >> /var/log/cloud-init-custom.log
+
+  # Example: Update pip
+  - python3 -m pip install --upgrade pip
+
+  # Example: Install Python packages
+  # - pip3 install ansible boto3 requests
+
+  # Example: Clone a git repository
+  # - git clone https://github.com/yourusername/yourrepo.git /opt/yourrepo
+
+  # Example: Enable and start custom service
+  # - systemctl daemon-reload
+  # - systemctl enable custom-app.service
+  # - systemctl start custom-app.service
+
+  # Example: Configure Docker (if installed)
+  # - usermod -aG docker admin
+  # - systemctl enable docker
+  # - systemctl start docker
+
+  # Example: Set up a cron job
+  # - echo "0 2 * * * root /usr/local/bin/backup.sh" >> /etc/crontab
+
+  # Example: Configure firewall
+  # - ufw allow 22/tcp
+  # - ufw allow 80/tcp
+  # - ufw allow 443/tcp
+  # - ufw --force enable
+
+  # Mark completion
+  - echo "Custom cloud-init completed at $(date)" >> /var/log/cloud-init-custom.log
+
+# ============================================================================
+# BOOTCMD (runs every boot, not just first boot)
+# ============================================================================
+
+# bootcmd:
+#   - echo "System booted at $(date)" >> /var/log/boot-events.log
+
+# ============================================================================
+# TIMEZONE AND LOCALE
+# ============================================================================
+
+# Set timezone (optional)
+# timezone: America/New_York
+
+# Set locale (optional)
+# locale: en_US.UTF-8
+
+# ============================================================================
+# POWER STATE (optional)
+# ============================================================================
+
+# Reboot or power off after cloud-init completes (optional)
+# power_state:
+#   mode: reboot
+#   message: Rebooting after cloud-init
+#   timeout: 30
+#   condition: true
