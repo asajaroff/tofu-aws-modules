@@ -178,6 +178,104 @@ Always consider:
 - Test changes in isolated environment
 - Use terraform/tofu plan to preview changes
 
+## Git Commit and PR Guidelines
+
+### Commit Message Format (REQUIRED)
+
+**This repository REQUIRES conventional commits format:**
+
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `refactor`: Code refactoring (no functional changes)
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks, dependency updates
+- `perf`: Performance improvements
+- `ci`: CI/CD pipeline changes
+- `build`: Build system or external dependency changes
+- `style`: Code style changes (formatting, etc.)
+
+**Scope (optional):**
+- Module or component affected (e.g., `ec2`, `iam`, `security-groups`)
+
+**Breaking Changes:**
+- Add `!` after type/scope: `feat(ec2)!: rename pool_name to name`
+- Add `BREAKING CHANGE:` footer with migration details
+
+### Commit Message Rules
+
+**REQUIRED:**
+- MUST use conventional commit format
+- Subject line MUST be lowercase
+- Subject line MUST not end with period
+- Subject line MUST be imperative mood ("add feature" not "added feature")
+- Body MUST be separated from subject by blank line (if present)
+
+**FORBIDDEN:**
+- NEVER add "Generated with Claude Code" or similar AI attribution
+- NEVER add "Co-Authored-By: Claude" or AI co-author tags
+- NEVER use emojis in commit messages
+- NEVER exceed 72 characters in subject line
+
+### Pull Request Format
+
+**Title Format:**
+```
+<type>(<scope>): <description>
+```
+
+**Description Format:**
+- Use clear sections: Summary, Changes, Migration Guide (if breaking), Test Plan
+- Be concise but complete
+- Focus on technical content
+
+**FORBIDDEN in PRs:**
+- NEVER add "Generated with Claude Code" footer
+- NEVER add "Co-Authored-By: Claude"
+- NEVER add AI attribution
+
+### Examples
+
+**Good commit messages:**
+```
+feat(ec2): add flatcar container linux support
+
+Adds Flatcar Container Linux as a new os_family option with
+architecture-aware AMI selection and container-based SSM agent.
+
+fix(ec2): apply spot_price variable instead of hardcoded value
+
+The spot instance max_price was hardcoded to 0.005 instead of using
+the var.spot_price variable.
+
+feat(ec2)!: rename variables for consistency
+
+BREAKING CHANGE: Renamed pool_name to name, instances_map to instances,
+create_key to create_ssh_key for clearer naming conventions.
+```
+
+**Bad commit messages:**
+```
+Add flatcar support
+
+fix: Apply spot_price variable instead of hardcoded value.
+
+feat(ec2): Added Flatcar support 🎉
+
+feat(ec2): add flatcar support
+
+🤖 Generated with Claude Code
+```
+
 ## Current Known Issues
 
 Check `TODO.md` for the current list of known issues and planned improvements.
