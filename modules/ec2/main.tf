@@ -6,6 +6,7 @@ resource "aws_instance" "this" {
   key_name                    = var.create_key == true ? aws_key_pair.this[0].key_name : ""
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
+  ipv6_address_count          = 1
   user_data                   = local.selected_cloudinit
   iam_instance_profile        = aws_iam_instance_profile.this.name
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
