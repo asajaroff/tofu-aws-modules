@@ -8,6 +8,17 @@ data "cloudinit_config" "debian" {
     content      = var.custom_bootstrap_script != "" ? file(var.custom_bootstrap_script) : file("${path.module}/config/bootstrap-debian.sh")
   }
 
+  dynamic "part" {
+    for_each = length(var.additional_ebs_volumes) > 0 ? [1] : []
+    content {
+      filename     = "mount-ebs.sh"
+      content_type = "text/x-shellscript"
+      content = templatefile("${path.module}/config/mount-ebs.sh.tpl", {
+        volumes = var.additional_ebs_volumes
+      })
+    }
+  }
+
   part {
     filename     = "bootstrap.yaml"
     content_type = "text/cloud-config"
@@ -23,6 +34,17 @@ data "cloudinit_config" "ubuntu" {
     filename     = "bootstrap-ubuntu.sh"
     content_type = "text/x-shellscript"
     content      = var.custom_bootstrap_script != "" ? file(var.custom_bootstrap_script) : file("${path.module}/config/bootstrap-ubuntu.sh")
+  }
+
+  dynamic "part" {
+    for_each = length(var.additional_ebs_volumes) > 0 ? [1] : []
+    content {
+      filename     = "mount-ebs.sh"
+      content_type = "text/x-shellscript"
+      content = templatefile("${path.module}/config/mount-ebs.sh.tpl", {
+        volumes = var.additional_ebs_volumes
+      })
+    }
   }
 
   part {
@@ -42,6 +64,17 @@ data "cloudinit_config" "freebsd" {
     content      = var.custom_bootstrap_script != "" ? file(var.custom_bootstrap_script) : file("${path.module}/config/bootstrap-freebsd.sh")
   }
 
+  dynamic "part" {
+    for_each = length(var.additional_ebs_volumes) > 0 ? [1] : []
+    content {
+      filename     = "mount-ebs.sh"
+      content_type = "text/x-shellscript"
+      content = templatefile("${path.module}/config/mount-ebs.sh.tpl", {
+        volumes = var.additional_ebs_volumes
+      })
+    }
+  }
+
   part {
     filename     = "bootstrap.yaml"
     content_type = "text/cloud-config"
@@ -57,6 +90,17 @@ data "cloudinit_config" "flatcar" {
     filename     = "bootstrap-flatcar.sh"
     content_type = "text/x-shellscript"
     content      = var.custom_bootstrap_script != "" ? file(var.custom_bootstrap_script) : file("${path.module}/config/bootstrap-flatcar.sh")
+  }
+
+  dynamic "part" {
+    for_each = length(var.additional_ebs_volumes) > 0 ? [1] : []
+    content {
+      filename     = "mount-ebs.sh"
+      content_type = "text/x-shellscript"
+      content = templatefile("${path.module}/config/mount-ebs.sh.tpl", {
+        volumes = var.additional_ebs_volumes
+      })
+    }
   }
 
   part {

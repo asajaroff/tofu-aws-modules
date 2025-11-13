@@ -32,6 +32,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added tags to IAM role, IAM instance profile, SSH key pair, and security group for better resource management
 - Added map-based AMI selection logic for cleaner code (`ami_map` in data.tf)
 - Added map-based cloudinit selection logic for cleaner code (`cloudinit_map` in cloudinit.tf)
+- Added `additional_security_group_ids` variable for attaching custom security groups alongside default SSH group
+- Added `additional_iam_policy_arns` variable for attaching custom IAM policies to instance role
+- Added `root_volume_encrypted` variable (default: true) for root volume encryption
+- Added `root_volume_kms_key_id` variable for specifying custom KMS key for root volume encryption
+- Added `custom_ami_id` variable to override automatic AMI selection with custom/golden images
+- Added `additional_ebs_volumes` variable for attaching and auto-mounting additional EBS volumes
+- Added automatic EBS volume formatting, mounting, and /etc/fstab management via cloud-init
+- Added `ebs_volume_ids` and `ebs_volume_arns` outputs for additional EBS volumes
+- Added subnet data source for retrieving availability zone information
+- Created `ebs.tf` with EBS volume and attachment resources
+- Created `config/mount-ebs.sh.tpl` template for automatic EBS volume mounting
 
 ### Changed - BREAKING
 - **BREAKING**: Renamed `pool_name` variable to `name` for clearer purpose and simpler naming
@@ -96,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - **SECURITY**: Changed default IPv6 SSH behavior from open (`::/0`) to closed (empty list) - must explicitly allow IPv6 addresses
 - **SECURITY**: IPv6 SSH now requires explicit address whitelisting via `allow_ssh_ipv6_ips` variable
+- **SECURITY**: Root volume encryption now enabled by default (`root_volume_encrypted = true`)
 
 ### Verified
 - Verified Debian 13 (Trixie) AMI availability and naming pattern compatibility

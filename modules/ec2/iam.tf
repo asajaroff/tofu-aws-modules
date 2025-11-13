@@ -27,6 +27,14 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+# Attach additional IAM policies to role
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each   = toset(var.additional_iam_policy_arns)
+  role       = aws_iam_role.this.name
+  policy_arn = each.value
+}
+
 # Attach IAM role to instance profile
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
 resource "aws_iam_instance_profile" "this" {

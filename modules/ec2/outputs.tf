@@ -55,3 +55,19 @@ output "instance_arns" {
     instance_id => instance.arn
   }
 }
+
+output "ebs_volume_ids" {
+  description = "Map of additional EBS volume IDs (key format: instance_name-volN)"
+  value = {
+    for key, vol in aws_ebs_volume.additional :
+    key => vol.id
+  }
+}
+
+output "ebs_volume_arns" {
+  description = "Map of additional EBS volume ARNs (key format: instance_name-volN)"
+  value = {
+    for key, vol in aws_ebs_volume.additional :
+    key => vol.arn
+  }
+}

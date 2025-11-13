@@ -7,7 +7,8 @@ locals {
     flatcar = data.aws_ami.flatcar.id
   }
 
-  selected_ami = local.ami_map[var.os_family]
+  # Use custom AMI if provided, otherwise use automatic selection based on os_family
+  selected_ami = var.custom_ami_id != null ? var.custom_ami_id : local.ami_map[var.os_family]
 }
 
 data "aws_ami" "ubuntu" {
@@ -68,4 +69,8 @@ data "aws_ami" "flatcar" { # https://www.flatcar.org/docs/latest/installing/clou
 
 data "aws_vpc" "selected" {
   id = var.vpc_id
+}
+
+data "aws_subnet" "selected" {
+  id = var.subnet_id
 }

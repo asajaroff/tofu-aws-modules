@@ -7,16 +7,21 @@ resource "aws_instance" "this" {
   subnet_id                   = var.subnet_id
   associate_public_ip_address = each.value.public
   ipv6_address_count          = 1
-  user_data                   = local.selected_cloudinit
-  iam_instance_profile        = aws_iam_instance_profile.this.name
-  vpc_security_group_ids      = [aws_security_group.instance.id]
-  disable_api_termination     = each.value.disable_api_termination
+  user_data              = local.selected_cloudinit
+  iam_instance_profile   = aws_iam_instance_profile.this.name
+  vpc_security_group_ids = concat(
+    [aws_security_group.instance.id],
+    var.additional_security_group_ids
+  )
+  disable_api_termination = each.value.disable_api_termination
 
   # Root block device configuration
   root_block_device {
     volume_type           = "gp3"
     volume_size           = each.value.volume_size
     delete_on_termination = true
+    encrypted             = var.root_volume_encrypted
+    kms_key_id            = var.root_volume_kms_key_id
   }
 
   # Spot instance configuration
