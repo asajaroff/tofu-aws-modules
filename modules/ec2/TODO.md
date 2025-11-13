@@ -150,11 +150,278 @@ variable "additional_security_group_ids" {
 - [ ] Add instance tenancy options (default/dedicated/host)
 - [ ] Add CPU credits configuration for burstable instances (unlimited/standard)
 
-### 18. Storage Enhancements
-- [ ] Add support for additional EBS volumes
-- [ ] Add volume type configuration (gp2, gp3, io1, io2, etc.)
-- [ ] Add IOPS configuration for io1/io2 volumes
-- [ ] Add throughput configuration for gp3 volumes
+### 18. Additional EBS Volumes with Custom Mount Points
+**Status**: Design Complete - Ready for Implementation
+
+**Description**: Add support for additional EBS volumes with automatic formatting, mounting, and persistence across reboots.
+
+#### New Files to Create:
+- `ebs.tf` - EBS volume and attachment resources
+- `config/mount-ebs.sh.tpl` - Template script for mounting volumes
+
+#### Files to Modify:
+- `variables.tf` - Add `additional_ebs_volumes` variable
+- `cloudinit.tf` - Include EBS mounting script in cloud-init for all OS families
+- `data.tf` - Add subnet data source (if not exists)
+- `outputs.tf` - Add EBS volume outputs
+
+#### Variable Definition (`variables.tf`):
+```hcl
+variable "additional_ebs_volumes" {
+  type = list(object({
+    device_name           = string
+    volume_size          = number
+    volume_type          = string
+    iops                 = optional(number)
+    throughput           = optional(number)
+    encrypted            = optional(bool, true)
+    kms_key_id           = optional(string)
+    delete_on_termination = optional(bool, true)
+    mount_point          = string
+    filesystem_type      = optional(string, "ext4")
+  }))
+  default     = []
+  description = <<EOT
+List of additional EBS volumes to attach to instances.
+Example:
+[
+  {
+    device_name  = "/dev/sdf"
+    volume_size  = 100
+    volume_type  = "gp3"
+    iops         = 3000
+    throughput   = 125
+    encrypted    = true
+    mount_point  = "/data"
+    filesystem_type = "ext4"
+  }
+]
+EOT
+}
+```
+
+#### Resource Configuration (`ebs.tf`):
+```hcl
+# Create additional EBS volumes
+resource "aws_ebs_volume" "additional" {
+  for_each = {
+    for idx, vol in var.additional_ebs_volumes :
+    "${idx}" => vol
+  }
+
+  availability_zone = data.aws_subnet.selected.availability_zone
+  size              = each.value.volume_size
+  type              = each.value.volume_type
+  iops              = each.value.iops
+  throughput        = each.value.throughput
+  encrypted         = each.value.encrypted
+  kms_key_id        = each.value.kms_key_id
+
+  tags = merge(
+    {
+      Name = "${var.pool_name}-ebs-${each.key}"
+    },
+    var.tags
+  )
+}
+
+# Attach volumes to instances
+resource "aws_volume_attachment" "additional" {
+  for_each = {
+    for pair in flatten([
+      for instance_key, instance in var.instances_map : [
+        for vol_idx, vol in var.additional_ebs_volumes : {
+          key         = "${instance_key}-${vol_idx}"
+          instance_id = aws_instance.this[instance_key].id
+          volume_id   = aws_ebs_volume.additional[tostring(vol_idx)].id
+          device_name = vol.device_name
+        }
+      ]
+    ]) : pair.key => pair
+  }
+
+  device_name = each.value.device_name
+  volume_id   = each.value.volume_id
+  instance_id = each.value.instance_id
+}
+```
+
+#### Mount Script Template (`config/mount-ebs.sh.tpl`):
+```bash
+#!/bin/bash
+set -e
+
+echo "Mounting additional EBS volumes..."
+
+%{~ for vol in volumes ~}
+# Mount ${vol.mount_point}
+echo "Processing ${vol.device_name} -> ${vol.mount_point}"
+
+# Wait for device to be available
+for i in {1..30}; do
+  if [ -b "${vol.device_name}" ]; then
+    echo "Device ${vol.device_name} is available"
+    break
+  fi
+  echo "Waiting for device ${vol.device_name}... ($i/30)"
+  sleep 2
+done
+
+# Create mount point
+mkdir -p ${vol.mount_point}
+
+# Check if device has a partition
+if ! blkid ${vol.device_name}1 > /dev/null 2>&1; then
+  echo "Creating partition and filesystem on ${vol.device_name}"
+  parted -s ${vol.device_name} mklabel gpt
+  parted -s ${vol.device_name} mkpart primary 0% 100%
+  sleep 2
+  mkfs.${vol.filesystem_type} ${vol.device_name}1
+else
+  echo "Filesystem already exists on ${vol.device_name}1"
+fi
+
+# Mount the volume
+if ! mountpoint -q ${vol.mount_point}; then
+  mount ${vol.device_name}1 ${vol.mount_point}
+  echo "Mounted ${vol.device_name}1 to ${vol.mount_point}"
+fi
+
+# Add to fstab if not already there
+if ! grep -q "${vol.device_name}1" /etc/fstab; then
+  echo "${vol.device_name}1 ${vol.mount_point} ${vol.filesystem_type} defaults,nofail 0 2" >> /etc/fstab
+  echo "Added ${vol.device_name}1 to /etc/fstab"
+fi
+
+%{~ endfor ~}
+
+echo "All EBS volumes mounted successfully"
+```
+
+#### Updated Cloud-init (`cloudinit.tf`):
+Update each OS family's cloudinit_config to include the mount script:
+```hcl
+data "cloudinit_config" "debian" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename     = "bootstrap-debian.sh"
+    content_type = "text/x-shellscript"
+    content      = file("${path.module}/config/bootstrap-debian.sh")
+  }
+
+  part {
+    filename     = "mount-ebs.sh"
+    content_type = "text/x-shellscript"
+    content      = templatefile("${path.module}/config/mount-ebs.sh.tpl", {
+      volumes = var.additional_ebs_volumes
+    })
+  }
+
+  part {
+    filename     = "bootstrap.yaml"
+    content_type = "text/cloud-config"
+    content      = file("${path.module}/config/cloud-config-debian.yaml")
+  }
+}
+# Repeat for ubuntu, freebsd, and flatcar
+```
+
+#### Data Source (`data.tf`):
+```hcl
+data "aws_subnet" "selected" {
+  id = var.subnet_id
+}
+```
+
+#### New Outputs (`outputs.tf`):
+```hcl
+output "ebs_volume_ids" {
+  description = "Map of additional EBS volume IDs"
+  value = {
+    for idx, vol in aws_ebs_volume.additional :
+    idx => vol.id
+  }
+}
+
+output "ebs_volume_arns" {
+  description = "Map of additional EBS volume ARNs"
+  value = {
+    for idx, vol in aws_ebs_volume.additional :
+    idx => vol.arn
+  }
+}
+```
+
+#### Usage Example:
+```hcl
+module "ec2_with_storage" {
+  source = "./modules/ec2"
+
+  pool_name  = "web-servers"
+  vpc_id     = "vpc-12345"
+  subnet_id  = "subnet-67890"
+
+  instances_map = [
+    {
+      name                    = "web-01.example.com"
+      instance_type           = "t3.large"
+      disable_api_termination = false
+      volume_size            = 20
+      public                 = true
+    }
+  ]
+
+  additional_ebs_volumes = [
+    {
+      device_name     = "/dev/sdf"
+      volume_size     = 100
+      volume_type     = "gp3"
+      iops            = 3000
+      throughput      = 125
+      encrypted       = true
+      mount_point     = "/data"
+      filesystem_type = "ext4"
+    },
+    {
+      device_name     = "/dev/sdg"
+      volume_size     = 50
+      volume_type     = "gp3"
+      mount_point     = "/var/log/app"
+      filesystem_type = "xfs"
+    }
+  ]
+}
+```
+
+#### Features:
+- ✅ Multiple additional EBS volumes per instance
+- ✅ Custom mount points
+- ✅ Configurable volume type (gp2, gp3, io1, io2)
+- ✅ IOPS and throughput configuration for performance volumes
+- ✅ Encryption support with optional KMS key
+- ✅ Automatic partition creation
+- ✅ Automatic filesystem creation (ext4, xfs, etc.)
+- ✅ Automatic mounting on first boot
+- ✅ Persistent mounts via /etc/fstab
+- ✅ Device availability checking (waits up to 60 seconds)
+- ✅ Idempotent - won't re-format existing filesystems
+- ✅ Works across all OS families (Debian, Ubuntu, FreeBSD, Flatcar)
+
+#### Implementation Checklist:
+- [ ] Create `ebs.tf` with volume and attachment resources
+- [ ] Create `config/mount-ebs.sh.tpl` template
+- [ ] Add `additional_ebs_volumes` variable to `variables.tf`
+- [ ] Update `cloudinit.tf` for all OS families (debian, ubuntu, freebsd, flatcar)
+- [ ] Add `data.aws_subnet.selected` to `data.tf` (if not exists)
+- [ ] Add EBS volume outputs to `outputs.tf`
+- [ ] Test with single volume
+- [ ] Test with multiple volumes
+- [ ] Test with different filesystem types
+- [ ] Test with encrypted volumes
+- [ ] Test idempotency (rerunning doesn't break existing volumes)
+- [ ] Update module README with usage examples
 
 ### 19. Monitoring and Backup
 - [ ] Add EBS snapshot lifecycle policy

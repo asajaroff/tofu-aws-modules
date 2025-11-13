@@ -1,5 +1,7 @@
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "this" {
-  name = "${var.pool_name}-ec2-role"
+  name = "${var.name}-ec2-role"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -13,18 +15,31 @@ resource "aws_iam_role" "this" {
       },
     ]
   })
+
+  tags = var.tags
 }
 
-#Attach role to policy
-#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
-resource "aws_iam_role_policy_attachment" "custom" {
+# Attach SSM policy to role for Session Manager access
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+resource "aws_iam_role_policy_attachment" "ssm" {
+  count      = var.enable_ssm ? 1 : 0
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-#Attach role to an instance profile
-#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
+# Attach additional IAM policies to role
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each   = toset(var.additional_iam_policy_arns)
+  role       = aws_iam_role.this.name
+  policy_arn = each.value
+}
+
+# Attach IAM role to instance profile
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
 resource "aws_iam_instance_profile" "this" {
-  name = "${var.pool_name}-iam-instance-profile"
+  name = "${var.name}-instance-profile"
   role = aws_iam_role.this.name
+
+  tags = var.tags
 }

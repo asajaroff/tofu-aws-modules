@@ -1,5 +1,14 @@
 locals {
-  selected_ami = var.os_family == "debian" ? data.aws_ami.debian.id : (var.os_family == "freebsd" ? data.aws_ami.freebsd.id : data.aws_ami.ubuntu.id)
+  # Map of OS family to AMI ID
+  ami_map = {
+    debian  = data.aws_ami.debian.id
+    ubuntu  = data.aws_ami.ubuntu.id
+    freebsd = data.aws_ami.freebsd.id
+    flatcar = data.aws_ami.flatcar.id
+  }
+
+  # Use custom AMI if provided, otherwise use automatic selection based on os_family
+  selected_ami = var.custom_ami_id != null ? var.custom_ami_id : local.ami_map[var.os_family]
 }
 
 data "aws_ami" "ubuntu" {
@@ -41,6 +50,27 @@ data "aws_ami" "freebsd" { # https://eu-west-1.console.aws.amazon.com/ec2/home?r
   owners = ["782442783595"] # https://wiki.debian.org/Cloud/AmazonEC2Image/
 }
 
+data "aws_ami" "flatcar" { # https://www.flatcar.org/docs/latest/installing/cloud/aws-ec2/
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["Flatcar-stable-*-hvm"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "architecture"
+    values = [var.os_arch == "amd64" ? "x86_64" : "arm64"]
+  }
+  owners = ["075585003325"] # Official Flatcar Container Linux
+}
+
 data "aws_vpc" "selected" {
   id = var.vpc_id
+}
+
+data "aws_subnet" "selected" {
+  id = var.subnet_id
 }
