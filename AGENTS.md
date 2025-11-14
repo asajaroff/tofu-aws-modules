@@ -70,19 +70,22 @@ This repository follows the [Conventional Commits specification](https://www.con
 
 ### 3. Module Versioning & Tagging
 
-Git tags follow semantic versioning with module prefix:
+Git tags follow semantic versioning with full module path:
 
-**Format:** `<module-path>/vX.Y.Z`
+**Standard Format:** `<provider>/<module-name>/vX.Y.Z`
 
 **Examples:**
-- `ec2/v1.1.0`
-- `cloudfront-s3-static-site/v1.0.0`
-- `do-kubernetes/v1.0.0`
+- `aws/ec2/v1.1.0`
+- `aws/cloudfront-s3-static-site/v1.0.0`
+- `digitalocean/kubernetes/v1.0.0`
+- `azure/vm/v1.0.0`
 
 **Semantic Versioning:**
 - **MAJOR** (X): Breaking changes that require user action
 - **MINOR** (Y): New features, backwards-compatible
 - **PATCH** (Z): Bug fixes, backwards-compatible
+
+**Important:** See [docs/TAGGING.md](./docs/TAGGING.md) for complete tagging guidelines and migration strategy for old tags.
 
 ### 4. Module Development Workflow
 
