@@ -37,8 +37,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution. | `string` | n/a | yes |
 | <a name="input_aws_acm_certificate_arn"></a> [aws\_acm\_certificate\_arn](#input\_aws\_acm\_certificate\_arn) | An ARN for a certificate, it must be created on the 'us-east-1' region. | `string` | n/a | yes |
-| <a name="input_country_blacklist"></a> [country\_blacklist](#input\_country\_blacklist) | A list of countries to blacklist, in the form of | `list(string)` | <pre>[<br>  "CN",<br>  "RU",<br>  "PK",<br>  "IN",<br>  "KP"<br>]</pre> | no |
-| <a name="input_description"></a> [description](#input\_description) | Description of the CDN distribution to be created | `list(string)` | n/a | yes |
+| <a name="input_country_blacklist"></a> [country\_blacklist](#input\_country\_blacklist) | A list of countries to blacklist, in the form of | `list(string)` | <pre>[<br/>  "CN",<br/>  "RU",<br/>  "PK",<br/>  "IN",<br/>  "KP"<br/>]</pre> | no |
+| <a name="input_description"></a> [description](#input\_description) | Description of the CDN distribution to be created | `string` | n/a | yes |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Domain name for the site, do not include the top level domain | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | 'prod' or 'non-prod' | `string` | n/a | yes |
 | <a name="input_mount_cloudfront_default_certificate"></a> [mount\_cloudfront\_default\_certificate](#input\_mount\_cloudfront\_default\_certificate) | Wether to mount CloudFront DNS certificate -for development- | `bool` | `false` | no |
@@ -46,7 +46,7 @@ No modules.
 | <a name="input_s3_bucket_id"></a> [s3\_bucket\_id](#input\_s3\_bucket\_id) | The bucket name for the S3 origin. | `string` | `"bucket-name"` | no |
 | <a name="input_s3_bucket_regional_domain_name"></a> [s3\_bucket\_regional\_domain\_name](#input\_s3\_bucket\_regional\_domain\_name) | Regional domain name for the target bucket. | `string` | n/a | yes |
 | <a name="input_s3_origin_path"></a> [s3\_origin\_path](#input\_s3\_origin\_path) | Path to the folder, if any, where the site is located | `string` | `""` | no |
-| <a name="input_top_level_domain_name"></a> [top\_level\_domain\_name](#input\_top\_level\_domain\_name) | Top level domain name, written as 'domain.example.com.'<br>Will be used to fetch the hosted zone id. | `string` | n/a | yes |
+| <a name="input_top_level_domain_name"></a> [top\_level\_domain\_name](#input\_top\_level\_domain\_name) | Top level domain name, written as 'domain.example.com.'<br/>Will be used to fetch the hosted zone id. | `string` | n/a | yes |
 
 ## Outputs
 
