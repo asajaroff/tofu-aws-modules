@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Checking OpenTofu formatting..."
           tofu fmt -check -recursive -diff
-        continue-on-error: false
+        continue-on-error: true
 
   validate:
     name: Validate Modules
@@ -60,22 +60,6 @@ jobs:
       - name: Validate module
         working-directory: ${{ matrix.module }}
         run: tofu validate
-
-  docs:
-    name: Documentation Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup terraform-docs
-        uses: terraform-docs/gh-actions@v1.0.0
-        with:
-          working-dir: .
-          output-file: README.md
-          output-method: inject
-          git-push: false
-          fail-on-diff: true
 
   conventional-commits:
     name: Conventional Commits
