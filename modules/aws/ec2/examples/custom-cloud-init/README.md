@@ -246,4 +246,4 @@ bash -n bootstrap-custom.sh
 
 ## License
 
-This example is part of the tofu-aws-modules project.
+This example is part of the tofu-modules project.

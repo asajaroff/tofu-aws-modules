@@ -169,8 +169,8 @@ Improves code readability without changing functionality.
 ## Integration with Terragrunt
 
 Modules are designed to work with:
-- Terragrunt catalog: `terragrunt catalog https://github.com/asajaroff/tofu-aws-modules`
-- Terragrunt scaffold: `terragrunt scaffold https://github.com/asajaroff/tofu-aws-modules/modules/<path>//.`
+- Terragrunt catalog: `terragrunt catalog https://github.com/asajaroff/tofu-modules`
+- Terragrunt scaffold: `terragrunt scaffold https://github.com/asajaroff/tofu-modules/modules/<path>//.`
 
 ## Additional Resources
 
