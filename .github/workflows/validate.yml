@@ -24,12 +24,8 @@ jobs:
 
       - name: Check formatting
         run: |
-          echo "Checking OpenTofu formatting (excluding examples)..."
-          # Find all .tf files excluding example directories
-          if find . -type f -name "*.tf" -not -path "*/examples/*" -not -path "*/.terraform/*" -exec tofu fmt -check -diff {} + | grep -q .; then
-            echo "Formatting issues found"
-            exit 1
-          fi
+          echo "Checking OpenTofu formatting..."
+          tofu fmt -check -recursive -diff
         continue-on-error: false
 
   validate:
