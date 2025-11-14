@@ -44,7 +44,9 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | ARN of the bucket. Will be of format arn:aws:s3:::bucketname |
-| <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | S3 bucket regional domain name. |
 | <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | Name of the bucket |
+| <a name="output_bucket_regional_domain_name"></a> [bucket\_regional\_domain\_name](#output\_bucket\_regional\_domain\_name) | S3 bucket regional domain name. |
+| <a name="output_bucket_website_fqdn"></a> [bucket\_website\_fqdn](#output\_bucket\_website\_fqdn) | Index document for the bucket |
+| <a name="output_bucket_website_index"></a> [bucket\_website\_index](#output\_bucket\_website\_index) | Index document for the bucket |
 | <a name="output_hosted_zone_id"></a> [hosted\_zone\_id](#output\_hosted\_zone\_id) | Route 53 Hosted Zone ID for this bucket's region |
 <!-- END_TF_DOCS -->

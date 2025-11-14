@@ -38,8 +38,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Final domain name of the certificate.<br>A DNS record for "www.$\{value\}" will be also created. | `string` | n/a | yes |
-| <a name="input_top_level_domain_name"></a> [top\_level\_domain\_name](#input\_top\_level\_domain\_name) | Top level domain name, written as 'domain.example.com.'<br>Will be used to fetch the hosted zone id. | `string` | n/a | yes |
+| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Final domain name of the certificate.<br/>A DNS record for "www.$\{value\}" will be also created. | `string` | n/a | yes |
+| <a name="input_top_level_domain_name"></a> [top\_level\_domain\_name](#input\_top\_level\_domain\_name) | Top level domain name, written as 'domain.example.com.'<br/>Will be used to fetch the hosted zone id. | `string` | n/a | yes |
 
 ## Outputs
 
