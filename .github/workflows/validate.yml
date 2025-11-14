@@ -1,0 +1,92 @@
+name: Validate Modules
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: Check formatting
+        run: |
+          echo "Checking OpenTofu formatting..."
+          tofu fmt -check -recursive -diff
+        continue-on-error: false
+
+  validate:
+    name: Validate Modules
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module:
+          - modules/aws/acm
+          - modules/aws/cdn
+          - modules/aws/cloudfront-s3-static-site
+          - modules/aws/ec2
+          - modules/aws/eip
+          - modules/aws/route53
+          - modules/aws/s3
+          - modules/digitalocean/kubernetes
+          - modules/digitalocean/vpc
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: Initialize module
+        working-directory: ${{ matrix.module }}
+        run: tofu init -backend=false
+
+      - name: Validate module
+        working-directory: ${{ matrix.module }}
+        run: tofu validate
+
+  docs:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup terraform-docs
+        uses: terraform-docs/gh-actions@v1.0.0
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: false
+          fail-on-diff: true
+
+  conventional-commits:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: .commitlintrc.json
