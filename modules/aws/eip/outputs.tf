@@ -1,4 +1,9 @@
 # outputs.tf
+output "id" {
+  value       = aws_eip.this.id
+  description = "The ID of the Elastic IP."
+}
+
 output "public_ip" {
   value       = aws_eip.this.public_ip
   description = "Contains the public IP address."
