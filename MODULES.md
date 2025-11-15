@@ -31,7 +31,7 @@ Comprehensive EC2 instance management with support for:
 **Usage:**
 ```hcl
 module "ec2" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/ec2?ref=aws/ec2/v1.1.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/ec2?ref=aws/ec2/v1.1.0"
 
   # Your configuration here
 }
@@ -72,7 +72,7 @@ Complete solution for hosting static websites with:
 **Usage:**
 ```hcl
 module "static_site" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/cloudfront-s3-static-site?ref=cloudfront-s3-static-site/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/cloudfront-s3-static-site?ref=cloudfront-s3-static-site/v1.0.0"
 
   domain_name = "example.com"
   # Additional configuration
@@ -156,7 +156,7 @@ Managed Kubernetes cluster with:
 **Usage:**
 ```hcl
 module "doks" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/digitalocean/kubernetes?ref=digitalocean/kubernetes/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/digitalocean/kubernetes?ref=digitalocean/kubernetes/v1.0.0"
 
   cluster_name = "production"
   region = "nyc1"
@@ -183,7 +183,7 @@ VPC network configuration for DigitalOcean:
 **Usage:**
 ```hcl
 module "vpc" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/digitalocean/vpc?ref=digitalocean/vpc/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/digitalocean/vpc?ref=digitalocean/vpc/v1.0.0"
 
   name = "production-vpc"
   region = "nyc1"
@@ -228,12 +228,12 @@ Want to contribute? Check out [AGENTS.md](./AGENTS.md) for guidelines.
 
 Browse available modules:
 ```bash
-terragrunt catalog https://github.com/asajaroff/tofu-aws-modules
+terragrunt catalog https://github.com/asajaroff/tofu-modules
 ```
 
 Scaffold a module:
 ```bash
-terragrunt scaffold https://github.com/asajaroff/tofu-aws-modules//modules/aws/ec2
+terragrunt scaffold https://github.com/asajaroff/tofu-modules//modules/aws/ec2
 ```
 
 ### Direct Module Reference
@@ -241,14 +241,14 @@ terragrunt scaffold https://github.com/asajaroff/tofu-aws-modules//modules/aws/e
 Use specific version (recommended):
 ```hcl
 module "example" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/<provider>/<module>?ref=<provider>/<module>/vX.Y.Z"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/<provider>/<module>?ref=<provider>/<module>/vX.Y.Z"
 }
 ```
 
 Use latest from main (not recommended for production):
 ```hcl
 module "example" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/<provider>/<module>"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/<provider>/<module>"
 }
 ```
 
@@ -256,12 +256,12 @@ module "example" {
 
 Clone and reference locally:
 ```bash
-git clone https://github.com/asajaroff/tofu-aws-modules.git
+git clone https://github.com/asajaroff/tofu-modules.git
 ```
 
 ```hcl
 module "example" {
-  source = "../tofu-aws-modules/modules/<provider>/<module>"
+  source = "../tofu-modules/modules/<provider>/<module>"
 }
 ```
 
@@ -305,7 +305,7 @@ Want to contribute a new module or improve an existing one?
 
 ## Support
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/asajaroff/tofu-aws-modules/issues)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/asajaroff/tofu-modules/issues)
 - **Documentation**: Check module README files
 - **Examples**: See module directories for example configurations
 

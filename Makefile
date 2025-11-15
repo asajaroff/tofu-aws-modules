@@ -31,3 +31,42 @@ terraform-generate-docs: ## Outputs the command for generating documentation
 
 terraform-format: ## Formats the repository according to Hashicorp's format standards
 	tofu fmt -recursive
+
+##@ Pre-commit Hooks
+
+pre-commit-install: ## Installs pre-commit tool (supports pacman, pipx, and pip)
+	@if command -v pre-commit >/dev/null 2>&1; then \
+		echo "pre-commit is already installed (version: $$(pre-commit --version))"; \
+	elif command -v pacman >/dev/null 2>&1; then \
+		echo "Detected Arch Linux - installing pre-commit via pacman..."; \
+		sudo pacman -S --noconfirm pre-commit; \
+	elif command -v pipx >/dev/null 2>&1; then \
+		echo "Installing pre-commit via pipx..."; \
+		pipx install pre-commit; \
+	elif command -v pip3 >/dev/null 2>&1; then \
+		echo "Installing pre-commit via pip3..."; \
+		pip3 install --user pre-commit; \
+	elif command -v pip >/dev/null 2>&1; then \
+		echo "Installing pre-commit via pip..."; \
+		pip install --user pre-commit; \
+	else \
+		echo "Error: No suitable package manager found."; \
+		echo "Please install one of: pacman (Arch), pipx, or pip"; \
+		exit 1; \
+	fi
+	@echo "Pre-commit installed successfully!"
+
+pre-commit-setup: pre-commit-install ## Installs pre-commit tool and sets up git hooks
+	pre-commit install
+	pre-commit install --hook-type commit-msg
+	echo "Git hooks installed successfully!"
+	echo "Run 'make pre-commit-run' to test the hooks on all files"
+
+pre-commit-run: ## Runs pre-commit hooks on all files
+	pre-commit run --all-files
+
+pre-commit-update: ## Updates pre-commit hooks to latest versions
+	pre-commit autoupdate
+
+setup-dev: pre-commit-setup ## Sets up local development environment (installs pre-commit hooks)
+	echo "Development environment setup complete!"

@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - feat/do-provider
 
 jobs:
   lint:
@@ -20,13 +19,13 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: 1.6.0
+          tofu_version: 1.8.3
 
       - name: Check formatting
         run: |
           echo "Checking OpenTofu formatting..."
           tofu fmt -check -recursive -diff
-        continue-on-error: true
+        continue-on-error: false
 
   validate:
     name: Validate Modules
@@ -51,7 +50,7 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: 1.6.0
+          tofu_version: 1.8.3
 
       - name: Initialize module
         working-directory: ${{ matrix.module }}

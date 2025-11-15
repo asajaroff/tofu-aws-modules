@@ -202,7 +202,7 @@ With proper tagging, users can reference specific versions:
 
 ```hcl
 terraform {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/ec2?ref=aws/ec2/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/ec2?ref=aws/ec2/v1.0.0"
 }
 ```
 

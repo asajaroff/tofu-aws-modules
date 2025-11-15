@@ -17,7 +17,7 @@ This module creates and manages AWS Elastic IP addresses (EIPs). Elastic IPs are
 
 ```hcl
 module "eip" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
 
   name = "web-server-eip"
 
@@ -32,7 +32,7 @@ module "eip" {
 
 ```hcl
 module "eip_with_instance" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
 
   name        = "web-server-eip"
   instance_id = "i-1234567890abcdef0"
@@ -48,7 +48,7 @@ module "eip_with_instance" {
 
 ```hcl
 module "eip_with_eni" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
 
   name                 = "nat-gateway-eip"
   network_interface_id = "eni-1234567890abcdef0"
@@ -63,7 +63,7 @@ module "eip_with_eni" {
 
 ```hcl
 module "eip_with_private_ip" {
-  source = "git::https://github.com/asajaroff/tofu-aws-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
+  source = "git::https://github.com/asajaroff/tofu-modules.git//modules/aws/eip?ref=aws/eip/v1.0.0"
 
   name                      = "multi-ip-server-eip"
   instance_id               = "i-1234567890abcdef0"

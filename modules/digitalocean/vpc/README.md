@@ -25,7 +25,7 @@ Placeholder for usage.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.68.0 |
+| <a name="provider_digitalocean"></a> [digitalocean](#provider\_digitalocean) | 2.69.0 |
 
 ## Modules
 
@@ -42,7 +42,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_do_token"></a> [do\_token](#input\_do\_token) | Token | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | Name for the VPC | `string` | `"tofu-aws-modules-tests"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name for the VPC | `string` | `"tofu-modules-tests"` | no |
 | <a name="input_region"></a> [region](#input\_region) | Region where the VPC will be deployed | `string` | `"ams3"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | variables.tf | `map(string)` | `{}` | no |
 

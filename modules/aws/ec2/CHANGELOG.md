@@ -154,6 +154,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Makefile for common operations
 - Initial documentation
 
-[Unreleased]: https://github.com/asajaroff/tofu-aws-modules/compare/ec2-v1.0.1...HEAD
-[1.0.1]: https://github.com/asajaroff/tofu-aws-modules/compare/ec2-v1.0.0...ec2-v1.0.1
-[1.0.0]: https://github.com/asajaroff/tofu-aws-modules/releases/tag/ec2-v1.0.0
+[Unreleased]: https://github.com/asajaroff/tofu-modules/compare/ec2-v1.0.1...HEAD
+[1.0.1]: https://github.com/asajaroff/tofu-modules/compare/ec2-v1.0.0...ec2-v1.0.1
+[1.0.0]: https://github.com/asajaroff/tofu-modules/releases/tag/ec2-v1.0.0

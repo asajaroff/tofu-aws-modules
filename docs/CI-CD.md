@@ -59,7 +59,7 @@ sudo apt install pre-commit
 Install the git hooks:
 
 ```bash
-cd /path/to/tofu-aws-modules
+cd /path/to/tofu-modules
 pre-commit install
 pre-commit install --hook-type commit-msg
 ```

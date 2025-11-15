@@ -51,4 +51,3 @@ tflock: ## Generates the lockfile
 		-platform=darwin_arm64 \
 		-platform=linux_arm64 \
 		-platform=linux_amd64
-

@@ -35,5 +35,5 @@ resource "aws_route53_record" "www" {
   name    = "www.${var.domain_name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${data.aws_route53_zone.top_level_domain.name}"]
+  records = [data.aws_route53_zone.top_level_domain.name]
 }

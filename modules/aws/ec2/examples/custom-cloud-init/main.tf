@@ -27,7 +27,7 @@ provider "aws" {
 module "ec2_with_custom_cloudinit" {
   # Path to the EC2 module
   # Adjust this path based on where you've placed this example
-  source = "../../"  # Points to modules/ec2
+  source = "../../" # Points to modules/ec2
 
   # Basic configuration
   name      = "custom-cloudinit-example"
@@ -47,11 +47,11 @@ module "ec2_with_custom_cloudinit" {
   ]
 
   # OS configuration
-  os_family = "debian"  # Can be: debian, ubuntu, freebsd, flatcar
-  os_arch   = "amd64"   # Can be: amd64, arm64
+  os_family = "debian" # Can be: debian, ubuntu, freebsd, flatcar
+  os_arch   = "amd64"  # Can be: amd64, arm64
 
   # SSH access
-  allow_ssh_ips = ["0.0.0.0/0"]  # CHANGE THIS! Use your actual IP for security
+  allow_ssh_ips = ["0.0.0.0/0"] # CHANGE THIS! Use your actual IP for security
 
   # SSH key configuration
   create_ssh_key = true

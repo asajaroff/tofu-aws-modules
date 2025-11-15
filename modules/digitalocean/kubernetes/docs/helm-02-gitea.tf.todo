@@ -10,7 +10,7 @@ resource "helm_release" "gitea" {
 
   # values = [file("${path.module}/config/gitea.yaml")]
 
-  values = [ <<EOV
+  values = [<<EOV
 gitea:
   config:
     APP_NAME: "Gitea - sources for development.ar"
@@ -85,7 +85,7 @@ resource "aws_route53_record" "gitea" {
   name    = "git.development.ar"
   type    = "A"
   ttl     = 300
-  records = [ data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].ip ]
+  records = [data.kubernetes_service.nginx_ingress.status[0].load_balancer[0].ingress[0].ip]
   depends_on = [
     helm_release.gitea
   ]

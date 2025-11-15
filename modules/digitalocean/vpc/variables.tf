@@ -6,7 +6,7 @@ variable "tags" {
 
 variable "name" {
   type        = string
-  default     = "tofu-aws-modules-tests"
+  default     = "tofu-modules-tests"
   description = "Name for the VPC"
 }
 

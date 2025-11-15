@@ -1,7 +1,7 @@
-# terraform/tofu-aws-modules
+# terraform/tofu-modules
 Collection of `opentofu`/`terraform` modules.
 
-This modules have been designed for standalone usage or with a wrapper tool such as `terragrunt`. A live infrastructure that uses this modules can be found [here](https://github.com/asajaroff/cloud-infrastructure-org). 
+This modules have been designed for standalone usage or with a wrapper tool such as `terragrunt`. A live infrastructure that uses this modules can be found [here](https://github.com/asajaroff/cloud-infrastructure-org).
 
 ## Usage
 
@@ -18,13 +18,13 @@ Import the required module and specify the required inputs.
 Use terragrunt's [catalog explorer](https://terragrunt.gruntwork.io/docs/features/catalog/) to go through the modules:
 
 ```bash
-terragrunt catalog https://github.com/asajaroff/tofu-aws-modules
+terragrunt catalog https://github.com/asajaroff/tofu-modules
 ```
 
 #### Scaffold
 Use terragrunt's [scaffolding features](https://terragrunt.gruntwork.io/docs/features/scaffold/) to set up a particular module:
 ```bash
-terragrunt scaffold https://github.com/asajaroff/tofu-aws-modules/modules/ec2//.
+terragrunt scaffold https://github.com/asajaroff/tofu-modules/modules/ec2//.
 ```
 
 ## Developing

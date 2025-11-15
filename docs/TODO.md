@@ -1,6 +1,6 @@
 # Roadmap
 
-This document tracks current, pending, and future work for the tofu-aws-modules repository.
+This document tracks current, pending, and future work for the tofu-modules repository.
 
 ## Current Focus
 

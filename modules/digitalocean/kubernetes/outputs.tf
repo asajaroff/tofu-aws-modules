@@ -1,5 +1,5 @@
 output "kubeconfig" {
-  value       = digitalocean_kubernetes_cluster.this.kube_config.0.raw_config
+  value       = digitalocean_kubernetes_cluster.this.kube_config[0].raw_config
   description = "Kubernetes config for the cluster"
   sensitive   = true
 }
