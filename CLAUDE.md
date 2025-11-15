@@ -68,6 +68,29 @@ This repository follows the [Conventional Commits specification](https://www.con
 - Never add generated-by links or badges to commit messages
 - Keep commits professional and focused on the technical changes
 
+**Branch naming conventions:**
+
+Branch names MUST follow this format: `<type>/<scope>/<description>` or `<type>/<description>`
+
+Examples:
+- `feat/ec2/add-metadata-options`
+- `fix/cloudfront/cors-headers`
+- `docs/readme/update-examples`
+- `chore/ci/update-workflow`
+- `refactor/modules/simplify-structure`
+
+Branch naming is enforced by the pre-push git hook. The `main` and `master` branches are exempt from this rule.
+
+**Commit message template:**
+
+A commit message template is available at `.gitmessage` in the repository root. To use it, configure git:
+
+```bash
+git config commit.template .gitmessage
+```
+
+This will display helpful guidelines and examples when writing commit messages.
+
 ### 3. Module Versioning & Tagging
 
 Git tags follow semantic versioning with full module path:
