@@ -1,6 +1,6 @@
 # Design principles and patterns
 
-Some ideas and documents to review: 
+Some ideas and documents to review:
 
 * [Standard Module Structure](https://opentofu.org/docs/v1.6/language/modules/develop/structure/)
 * [Modules](https://opentofu.org/docs/v1.6/language/modules/)
