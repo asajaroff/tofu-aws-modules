@@ -44,20 +44,3 @@ variable "extra_tags" {
   }
   description = "Extra tags to be added to the resources created by this module"
 }
-
-variable "is_prod" {
-  type        = bool
-  default     = false
-  description = <<-EOT
-  If true, will enable Bucket Versioning and Bucket Logging.
-  EOT
-}
-
-variable "pretty_urls" {
-  type        = bool
-  default     = true
-  description = <<-EOT
-  If true, will deploy a cloudfront function to generate pretty URLs.
-  https://en.wikipedia.org/wiki/Clean_URL
-  EOT
-}
