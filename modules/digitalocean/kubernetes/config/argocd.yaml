@@ -44,4 +44,3 @@ server:
       nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
     tls: true
     hostname: grpc.argocd.development.ar
-

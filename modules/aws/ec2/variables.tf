@@ -210,7 +210,7 @@ variable "additional_ebs_volumes" {
     mount_point           = string
     filesystem_type       = optional(string, "ext4")
   }))
-  default = []
+  default     = []
   description = <<EOT
 List of additional EBS volumes to attach to ALL instances.
 Each volume will be automatically formatted, mounted, and added to /etc/fstab.

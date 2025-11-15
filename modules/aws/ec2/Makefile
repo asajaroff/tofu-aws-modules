@@ -71,4 +71,3 @@ release: ## Create and push a release tag (usage: make release VERSION=X.X.X)
 	git tag -a ec2/v$(VERSION) -m "Release ec2/v$(VERSION)"
 	git push origin ec2/v$(VERSION)
 	@echo "Release ec2/v$(VERSION) created and pushed successfully!"
-

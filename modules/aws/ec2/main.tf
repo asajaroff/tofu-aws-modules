@@ -8,7 +8,7 @@ resource "aws_instance" "this" {
   associate_public_ip_address = each.value.public
   ipv6_address_count          = var.enable_ipv6 ? var.ipv6_address_count : 0
   user_data                   = local.selected_cloudinit
-  iam_instance_profile   = aws_iam_instance_profile.this.name
+  iam_instance_profile        = aws_iam_instance_profile.this.name
   vpc_security_group_ids = concat(
     [aws_security_group.instance.id],
     var.additional_security_group_ids

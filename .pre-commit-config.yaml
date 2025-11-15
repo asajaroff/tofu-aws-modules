@@ -2,13 +2,14 @@ repos:
   - repo: https://github.com/tofuutils/pre-commit-opentofu
     rev: v2.2.2
     hooks:
+      - id: tofu_fmt
+      - id: tofu_validate
       - id: tofu_tflint
       #   args:
       #   - --args=--config=${CONFIG_NAME}.${CONFIG_EXT}
       #   - --args=--call-module-type=all
-      - id: tofu_fmt
-        args:
-          - --args=-recursive
+      # Validate
+      #
 
 #  - repo: https://github.com/antonbabenko/pre-commit-terraform
 #    rev: v1.86.0

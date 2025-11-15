@@ -192,4 +192,3 @@ provision: ## Creates the clusters in the correct order for a succesfull provisi
 
 open-argocd:
 	chromium --ignore-certificate-errors argocd.development.ar &
-

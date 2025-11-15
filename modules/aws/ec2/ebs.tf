@@ -54,4 +54,3 @@ resource "aws_volume_attachment" "additional" {
   instance_id  = aws_instance.this[each.value.instance_key].id
   force_detach = true
 }
-

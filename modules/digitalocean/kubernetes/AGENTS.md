@@ -49,7 +49,7 @@ $ tree ./
 
 ## Makefile
 - Steps are documented
-- 
+-
 
 ## Helm deployment information
 - Helm Charts should be ideally pointing to an OCI registry
