@@ -1,0 +1,41 @@
+# <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+
+# feat:     A new feature
+# fix:      A bug fix
+# docs:     Documentation only changes
+# style:    Code style changes (formatting, missing semi-colons, etc.)
+# refactor: Code change that neither fixes a bug nor adds a feature
+# perf:     Performance improvements
+# test:     Adding or updating tests
+# build:    Changes to build system or dependencies
+# ci:       Changes to CI/CD configuration
+# chore:    Other changes that don't modify src or test files
+# revert:   Reverts a previous commit
+#
+# For breaking changes:
+# 1. Add '!' after type/scope: feat(module)!: description
+# 2. Include 'BREAKING CHANGE:' in body or footer
+# 3. Explain what breaks and how to migrate
+#
+# Guidelines:
+# - Use present tense: "add feature" not "added feature"
+# - Use imperative mood: "change" not "changes"
+# - First line max 72 characters
+# - Body wraps at 72 characters
+# - Separate subject from body with blank line
+# - Reference issues/PRs in footer: "Fixes #123" or "Closes #456"
+# - Keep commits focused on a single change
+#
+# feat(ec2): add support for instance metadata options
+# fix(cloudfront): correct CORS header configuration
+# docs(readme): update usage examples for VPC module
+# refactor(s3): simplify bucket policy structure
+# feat(eip)!: change output variable names for consistency
+#
+# BREAKING CHANGE: Output variable names have changed.
+# - `instance_id` is now `id`
+# - `instance_public_ip` is now `public_ip`
